@@ -15,7 +15,7 @@ def build_cifar100_dataloader(config, mode='train', transform=transform):
     dataset = datasets.ImageFolder(root=data_folder, transform=transform)
 
     if mode == 'train':
-        train_size = int(len(dataset) * config.TRAIN_SIZE)
+        train_size = int(len(dataset) * config["TRAIN_SIZE"])
         val_size = len(dataset) - train_size
         train_data, val_data = random_split(dataset, [train_size, val_size])
         train_loader = DataLoader(

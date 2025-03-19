@@ -1,5 +1,4 @@
 FROM nvidia/cuda:12.1.0-devel-ubuntu22.04
-LABEL author="erioe"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -20,20 +19,22 @@ RUN apt-get install -f && \
 
 RUN nvcc --version
 
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3.10 \
-    python3.10-distutils \
+    python3.9 \
     python3-pip && \
     python3 -m pip install --upgrade pip && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y build-essential python3-dev
 
 RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
 RUN apt-get update && apt-get install -y python3-dev
 
-COPY requirements.txt /
-RUN pip install -r requirements.txt
-EXPOSE 8888
+COPY requirements.txt ./
+RUN pip install --ignore-installed -r requirements.txt
 
 CMD ["bash"]
+
 

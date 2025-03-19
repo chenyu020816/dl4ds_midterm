@@ -1,11 +1,11 @@
 MODEL: "SimpleCNN"
-DEVICE: "mps"
-EPOCHS: 30
-BATCH_SIZE: 512
+DEVICE: "cuda"
+EPOCHS: 15
+BATCH_SIZE: 256
 LR: 1e-4
 LOSS: LabelSmooth_CE
 NUM_WORKERS: 4
-DATA_PATH: "./data/cifar100_data"
+DATA_PATH: "./data/aug_noise_data"
 TRAIN_SIZE: 0.8
 SEED: 42
-RUNS_FOLDER: "./trained_weights/SimpleCNN_20250319_190807"
+RUNS_FOLDER: "./trained_weights/SimpleCNN_20250320_011026"
