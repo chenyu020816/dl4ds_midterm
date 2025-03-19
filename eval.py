@@ -27,7 +27,7 @@ def main(config):
 
     all_predictions = eval_ood.evaluate_ood_test(model, config)
     submission_df_ood = eval_ood.create_ood_df(all_predictions)
-    submission_df_ood.to_csv("submission_ood.csv", index=False)
+    submission_df_ood.to_csv(os.path.join(config["RUNS_FOLDER"], "submission_ood.csv"), index=False)
 
     return None
 
