@@ -9,7 +9,8 @@ from utils.utils import *
 
 def main(config):
     model = load_model(config["MODEL"])
-    model.load_state_dict(torch.load(os.path.join(config["RUNS_FOLDER"], "best_model.pth")))
+    model_path = os.path.join(config["RUNS_FOLDER"], "best_model.pth")
+    model.load_state_dict(torch.load(model_path))
     model.to(config["DEVICE"])
     print("\nModel summary:")
     print(f"{model}\n")
