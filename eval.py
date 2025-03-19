@@ -22,7 +22,7 @@ def main(config):
     print(f"Test Accuracy: {clean_accuracy}")
 
     with open(log_path, "a") as log_file:
-        log_file.write("Test Accuracy: {clean_accuracy}\n")
+        log_file.write(f"Test Accuracy: {clean_accuracy}\n")
         log_file.flush()
 
     all_predictions = eval_ood.evaluate_ood_test(model, config)
