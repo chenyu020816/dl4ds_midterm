@@ -159,7 +159,7 @@ def ResNet101(num_classes=100, pretrained=False):
 
 
 def ResNet152(num_classes=100, pretrained=False):
-    model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet152', pretrained=pretrained)
+    model = torch.hub.load('pytorch/vision', 'resnet152',  weights="IMAGENET1K_V2")
     if not pretrained:
         model.fc = nn.Linear(model.fc.in_features, num_classes)
     else:
