@@ -1,0 +1,36 @@
+import argparse
+import os
+import torch
+import yaml
+from utils import eval_ood, eval_cifar100
+from utils import build_cifar100_dataloader
+from utils.utils import *
+
+
+def main(config):
+    model = load_model(config["MODEL"])
+    model.load_state_dict(torch.load(os.path.join(config["RUNS_FOLDER"], "best_model.pth")))
+    model.to(config["DEVICE"])
+    print("\nModel summary:")
+    print(f"{model}\n")
+
+    # test_loader = build_cifar100_dataloader(config, mode='test')
+    # predictions, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
+    # print(f"Test Accuracy: {clean_accuracy}")
+
+    all_predictions = eval_ood.evaluate_ood_test(model, config)
+    submission_df_ood = eval_ood.create_ood_df(all_predictions)
+    submission_df_ood.to_csv("submission_ood.csv", index=False)
+
+    return None
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, default='configs/config.yaml')
+    args = parser.parse_args()
+
+    with open(args.config, "r") as f:
+        print(args.config)
+        config = yaml.safe_load(f)
+    main(config)
