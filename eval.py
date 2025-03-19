@@ -7,7 +7,7 @@ from utils import build_cifar100_dataloader
 from utils.utils import *
 
 
-def main(config):
+def main(config, runs_folder):
     model = load_model(config["MODEL"])
     model_path = os.path.join(config["RUNS_FOLDER"], "best_model.pth")
     model.load_state_dict(torch.load(model_path))
@@ -15,7 +15,7 @@ def main(config):
     print("\nModel summary:")
     print(f"{model}\n")
 
-    log_folder = config["RUNS_FOLDER"]
+    log_folder = runs_folder
     log_path = os.path.join(log_folder, "log.txt")
     test_loader = build_cifar100_dataloader(config, mode='test')
     _, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
@@ -27,7 +27,7 @@ def main(config):
 
     all_predictions = eval_ood.evaluate_ood_test(model, config)
     submission_df_ood = eval_ood.create_ood_df(all_predictions)
-    submission_df_ood.to_csv(os.path.join(config["RUNS_FOLDER"], "submission_ood.csv"), index=False)
+    submission_df_ood.to_csv(os.path.join(runs_folder, "submission_ood.csv"), index=False)
 
     return None
 
@@ -35,9 +35,10 @@ def main(config):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='configs/config.yaml')
+    parser.add_argument('--runs_folder', type=str, default='./trained_weights')
     args = parser.parse_args()
 
     with open(args.config, "r") as f:
         print(args.config)
         config = yaml.safe_load(f)
-    main(config)
+    main(config, args.runs_folder)
