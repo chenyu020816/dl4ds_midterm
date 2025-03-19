@@ -52,7 +52,7 @@ class BottleNeck(nn.Module):
 
 
 class ResNet(nn.Module):
-    def __init__(self, block, num_blocks, num_classes=10, num_channels=3):
+    def __init__(self, block, num_blocks, num_classes=100, num_channels=3):
         super().__init__()
         self.in_channels = 64
 
@@ -90,19 +90,19 @@ class ResNet(nn.Module):
         return self.layers(x)
 
 
-def ResNet34(num_classes, channels = 3):
+def ResNet34(num_classes=100, channels = 3):
     return ResNet(Block, [3, 4, 6, 3], num_classes, channels)
 
 
-def ResNet50(num_classes, channels=3):
+def ResNet50(num_classes=100, channels=3):
     return ResNet(BottleNeck, [3, 4, 6, 3], num_classes, channels)
 
 
-def ResNet101(num_classes, channels=3):
+def ResNet101(num_classes=100, channels=3):
     return ResNet(BottleNeck, [3, 4, 23, 3], num_classes, channels)
 
 
-def ResNet152(num_classes, channels=3):
+def ResNet152(num_classes=100, channels=3):
     return ResNet(BottleNeck, [3, 8, 36, 3], num_classes, channels)
 
 
