@@ -12,8 +12,6 @@ def main(config, runs_folder):
     model_path = os.path.join(config["RUNS_FOLDER"], "best_model.pth")
     model.load_state_dict(torch.load(model_path))
     model.to(config["DEVICE"])
-    print("\nModel summary:")
-    print(f"{model}\n")
 
     log_folder = runs_folder
     log_path = os.path.join(log_folder, "log.txt")
