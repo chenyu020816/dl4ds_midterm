@@ -90,12 +90,22 @@ class ResNet(nn.Module):
         return self.layers(x)
 
 
-def ResNet34(num_classes=100, channels = 3):
-    return ResNet(Block, [3, 4, 6, 3], num_classes, channels)
+def ResNet18(num_classes=100, pretrained=False):
+    model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=pretrained)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
 
 
-def ResNet50(num_classes=100, channels=3):
-    return ResNet(BottleNeck, [3, 4, 6, 3], num_classes, channels)
+def ResNet34(num_classes=100, pretrained=False):
+    model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet34', pretrained=pretrained)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
+
+
+def ResNet50(num_classes=100, pretrained=False):
+    model = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=pretrained)
+    model.fc = nn.Linear(model.fc.in_features, num_classes)
+    return model
 
 
 def ResNet101(num_classes=100, channels=3):
@@ -107,7 +117,7 @@ def ResNet152(num_classes=100, channels=3):
 
 
 def main():
-    model = ResNet50(100, 3)
+    model = ResNet18(100)
     print(model)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
