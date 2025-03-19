@@ -14,9 +14,15 @@ def main(config):
     print("\nModel summary:")
     print(f"{model}\n")
 
-    # test_loader = build_cifar100_dataloader(config, mode='test')
-    # predictions, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
-    # print(f"Test Accuracy: {clean_accuracy}")
+    log_folder = config["RUNS_FOLDER"]
+    log_path = os.path.join(log_folder, "log.txt")
+    test_loader = build_cifar100_dataloader(config, mode='test')
+    _, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
+    print(f"Test Accuracy: {clean_accuracy}")
+
+    with open(log_path, "a") as log_file:
+        log_file.write("Test Accuracy: {clean_accuracy}\n")
+        log_file.flush()
 
     all_predictions = eval_ood.evaluate_ood_test(model, config)
     submission_df_ood = eval_ood.create_ood_df(all_predictions)
