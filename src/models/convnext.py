@@ -55,11 +55,11 @@ def ConvNextSmall(num_classes, pretrained=False):
 
 
 def ConvNextMedium(num_classes, pretrained=False):
-    return get_convnext("convnext_small", num_classes, pretrained)
+    return get_convnext("convnext_medium", num_classes, pretrained)
 
 
 def ConvNextLarge(num_classes, pretrained=False):
-    return get_convnext("convnext_small", num_classes, pretrained)
+    return get_convnext("convnext_large", num_classes, pretrained)
 
 
 if __name__ == '__main__':
