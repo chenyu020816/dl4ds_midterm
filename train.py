@@ -4,9 +4,9 @@ import json
 import os
 from pandas import DataFrame
 import pdb
+import shutil
 from sklearn.metrics import confusion_matrix
 import torch
-import torch.nn as nn
 import torch.optim as optim
 from tqdm.auto import tqdm
 import wandb
@@ -142,6 +142,7 @@ def main(config):
     # create model training folder to save model's weights, logs, ...
     log_folder = create_runs_folder(config["MODEL"])
     log_path = os.path.join(log_folder, "log.txt")
+    shutil.copy(config["config_file"], log_folder)
     print(f"Training Folder: {log_folder}")
 
     # init wandb
@@ -205,5 +206,6 @@ if __name__ == '__main__':
     with open(args.config, "r") as f:
         print(args.config)
         config = yaml.safe_load(f)
+    config["config_file"] = args.config
 
     main(config)
