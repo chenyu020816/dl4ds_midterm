@@ -1,4 +1,4 @@
-
+from torchvision.datasets import ImageFolder
 
 coarse_to_fine = {
     "aquatic_mammals": ["beaver", "dolphin", "otter", "seal", "whale"],
@@ -24,3 +24,15 @@ coarse_to_fine = {
 }
 
 fine_to_coarse = {fine: coarse for coarse, fine_list in coarse_to_fine.items() for fine in fine_list}
+
+
+class HierarchicalDataset(ImageFolder):
+    def __init__(self, root, transform=None):
+        super().__init__(root, transform=transform)
+        self.coarse_labels = [fine_to_coarse[self.classes[idx]] for idx in self.targets]
+        self.coarse_classes = list(coarse_to_fine.keys())  # 大類別清單
+
+    def __getitem__(self, index):
+        img, fine_label = super().__getitem__(index)
+        coarse_label = self.coarse_classes.index(self.coarse_labels[index])
+        return img, coarse_label, fine_label

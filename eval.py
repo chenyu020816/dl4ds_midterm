@@ -9,7 +9,7 @@ from utils.utils import *
 
 
 def main(config, runs_folder, ood_pred):
-    model = load_model(config["MODEL"])
+    model = load_model(config["MODEL"], 100, config["PRETRAIN"])
     model_path = os.path.join(runs_folder, "best_model.pth")
     model.load_state_dict(torch.load(model_path))
     model.to(config["DEVICE"])
