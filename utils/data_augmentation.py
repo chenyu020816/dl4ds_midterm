@@ -1,14 +1,15 @@
 import albumentations as A
 import argparse
 import cv2
+import numpy as np
 import os
-from torchvision.transforms import AutoAugment, AutoAgumentPolicy
+from torchvision.transforms import AutoAugment, AutoAugmentPolicy, ToPILImage
 from tqdm import tqdm
 
 
 auto_augment = AutoAugment(AutoAugmentPolicy.CIFAR10)
 def auto_augment_transform(image, **kwargs):
-    pil_image = T.ToPILImage()(image)  
+    pil_image = ToPILImage()(image)  
     aug_image = auto_augment(pil_image)
     return np.array(aug_image)
 IMAGE_SIZE = 32
