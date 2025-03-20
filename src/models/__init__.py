@@ -7,5 +7,10 @@ __all__ = [
     "ResNet50",
     "ResNet101",
     "ResNet152",
+    "ConvNextBase",
+    "ConvNextTiny",
+    "ConvNextSmall",
+    "ConvNextLarge",
     "SimpleCNN",
+    "ImageEncoder", 
 ]

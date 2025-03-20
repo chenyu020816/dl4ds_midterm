@@ -5,8 +5,9 @@ BATCH_SIZE: 256
 PRETRAIN: False
 LR: 1e-4
 LOSS: FC
+MIXUP: True
 LR_STEP_SIZE: 15
 NUM_WORKERS: 4
-DATA_PATH: "./data/aug_noise_data_v3_5"
+DATA_PATH: "./data/aug_noise_data_v2_5"
 TRAIN_SIZE: 0.8
 SEED: 42

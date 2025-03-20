@@ -17,7 +17,7 @@ from utils.utils import *
 from src import *
 
 
-def train(config, model, epoch, train_loader, optimizer, criterion):
+def train(config, model, epoch, train_loader, text_encoding, optimizer, criterion):
     model.train()
 
     running_loss = 0.0
@@ -30,20 +30,16 @@ def train(config, model, epoch, train_loader, optimizer, criterion):
         # move inputs and labels to the target device
         inputs, labels = inputs.to(config["DEVICE"]), labels.to(config["DEVICE"])
 
-        if config["MIXUP"]:
-            inputs, labels_a, labels_b, lam = mixup_data(inputs, labels)
-        preds = model(inputs)
-
-        if config["MIXUP"]:
-            loss = mixup_criterion(criterion, preds, labels_a, labels_b, lam)
-        else:
-            loss = criterion(preds, labels)
+        image_encoding = model(inputs)
+        loss = criterion(image_encoding, text_encoding, labels)
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         running_loss += loss.item()
-        _, predicted = torch.max(preds, 1)
+
+        similarity = (100.0 * image_encoding @ text_encoding.T).softmax(dim=-1)
+        predicted = class_names[similarity.argmax().item()]
 
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
@@ -55,7 +51,7 @@ def train(config, model, epoch, train_loader, optimizer, criterion):
     return train_loss, train_acc
 
 
-def validate(config, model, epoch, val_loader, criterion):
+def validate(config, model, epoch, val_loader, text_encoding, criterion):
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -69,22 +65,24 @@ def validate(config, model, epoch, val_loader, criterion):
         for i, (inputs, labels) in enumerate(progress_bar):
             # move inputs and labels to the target device
             inputs, labels = inputs.to(config["DEVICE"]), labels.to(config["DEVICE"])
-            preds = model(inputs)
-            loss = criterion(preds, labels)
+            image_encoding = model(inputs)
+            loss = criterion(image_encoding, text_encoding, labels)
 
             running_loss += loss.item()
-            _, predicted = torch.max(preds, 1)
+
+            similarity = (100.0 * image_encoding @ text_encoding.T).softmax(dim=-1)
+            predicted = class_names[similarity.argmax().item()]
+
             all_labels.extend(labels.cpu().numpy())
             all_predictions.extend(predicted.cpu().numpy())
-
-            if epoch+1 == config["EPOCHS"]:
-                cm = confusion_matrix(all_labels, all_predictions)
 
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
 
             progress_bar.set_postfix({"loss": running_loss / (i + 1), "acc": 100. * correct / total})
 
+    if epoch+1 == epochs:
+        cm = confusion_matrix(all_labels, all_predictions)
     val_loss = running_loss / len(val_loader)
     val_acc = 100. * correct / total
     return val_loss, val_acc, cm
@@ -117,13 +115,14 @@ def create_runs_folder(runs_name):
 
 
 def main(config):
-    model = load_model(config["MODEL"], 100, config["PRETRAIN"])
+    model = load_model(config["MODEL"])
     model.to(config["DEVICE"])
+    text_encoding = torch.load("cifar100_text_embeddings.pt").to(config["DEVICE"])
     print("\nModel summary:")
     print(f"{model}\n")
 
     train_loader, val_loader = build_cifar100_dataloader(config, mode='train')
-    criterion = load_criterion(config["LOSS"])
+    criterion = ContrastiveLoss(temperature=0.07)
     optimizer = optim.AdamW(
         model.parameters(),
         lr=float(config["LR"]),
@@ -154,12 +153,12 @@ def main(config):
     best_val_acc = 0.0
     epochs = config["EPOCHS"]
     with open(log_path, "w") as log_file:
-        for epoch in range(config["EPOCHS"]):
+        for epoch in range(config["EPOCHS"], config["EMB_DIM"], config["PRETRAIN"]):
             train_loss, train_acc = train(
-                config, model, epoch, train_loader, optimizer, criterion,
+                config, model, epoch, train_loader, text_encoding, optimizer, criterion,
             )
             val_loss, val_acc, cm = validate(
-                config, model, epoch, val_loader, criterion
+                config, model, epoch, val_loader, text_encoding, criterion
             )
             scheduler.step()
             wandb.log({
@@ -205,5 +204,6 @@ if __name__ == '__main__':
         print(args.config)
         config = yaml.safe_load(f)
     config["config_file"] = args.config
+    assert config["OVD"], "Not using OVD"
 
     main(config)

@@ -8,5 +8,7 @@ __all__ = [
     "LabelSmooth_CE",
     "FC",
     "AF",
+    "mixup_data",
+    "mixup_criterion",
     "EarlyStopping",
 ]

@@ -2,9 +2,9 @@ import torch.nn as nn
 
 
 class SimpleCNN(nn.Module):
-    def __init__(self, in_channels=3, num_classes=100):
+    def __init__(self, num_classes=100, pretrained=False):
         super(SimpleCNN, self).__init__()
-        self.in_channels = in_channels
+        self.in_channels = 3
         self.layers1 = nn.Sequential(
             nn.Conv2d(self.in_channels, 512, kernel_size=3, padding=1),
             nn.BatchNorm2d(512),
