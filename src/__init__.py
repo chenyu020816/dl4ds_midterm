@@ -7,6 +7,8 @@ __all__ = [
     "CE",
     "LabelSmooth_CE",
     "EarlyStopping",
+    "FC",
+    "AF",
 ]
 
 
