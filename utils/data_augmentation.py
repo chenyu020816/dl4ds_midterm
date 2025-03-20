@@ -20,7 +20,6 @@ TRANSFORMS = A.Compose([
     A.RandomBrightnessContrast(p=0.2),
     A.RGBShift(p=0.2),
     A.Rotate(limit=15, p=0.2),
-    AutoAugment(AutoAugmentPolicy.CIFAR10),
     A.AdvancedBlur(blur_limit=5, p=0.3),
     A.ISONoise(color_shift=(0.01, 0.05), intensity=(0.1, 0.5), p=0.3),
     A.MotionBlur(blur_limit=5, p=0.2),
