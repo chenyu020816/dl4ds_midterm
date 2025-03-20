@@ -1,9 +1,9 @@
 from .models import *
 from .criterion import *
-from early_stopping import EarlyStopping
+from .early_stopping import EarlyStopping
 
 __all__ = [
-    "ResNet",
+    "ResNet18",
     "ResNet34",
     "ResNet50",
     "ResNet101",
