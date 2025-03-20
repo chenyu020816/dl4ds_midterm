@@ -64,7 +64,7 @@ def validate(config, model, epoch, val_loader, criterion):
     total = 0
     all_labels = []
     all_predictions = []
-
+    cm = None
     epochs = config["EPOCHS"]
     with torch.no_grad():
         progress_bar = tqdm(val_loader, desc=f"Epoch {epoch+1:3d}/{epochs:3d} [ Val ]", leave=True)
@@ -76,9 +76,10 @@ def validate(config, model, epoch, val_loader, criterion):
 
             running_loss += loss.item()
             _, predicted = torch.max(preds, 1)
+            all_labels.extend(labels.cpu().numpy())
+            all_predictions.extend(predicted.cpu().numpy())
+
             if epoch+1 == config["EPOCHS"]:
-                all_labels.extend(labels.cpu().numpy())
-                all_predictions.extend(predicted.cpu().numpy())
                 cm = confusion_matrix(all_labels, all_predictions)
 
             total += labels.size(0)
