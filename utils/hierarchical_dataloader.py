@@ -1,32 +1,18 @@
-from torchvision.datasets import ImageFolder
+import os
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader, random_split
 
-coarse_to_fine = {
-    "aquatic_mammals": ["beaver", "dolphin", "otter", "seal", "whale"],
-    "fish": ["aquarium_fish", "flatfish", "ray", "shark", "trout"],
-    "flowers": ["orchid", "poppy", "rose", "sunflower", "tulip"],
-    "food_containers": ["bottle", "bowl", "can", "cup", "plate"],
-    "fruit_and_vegetables": ["apple", "mushroom", "orange", "pear", "sweet_pepper"],
-    "household_electrical_devices": ["clock", "keyboard", "lamp", "telephone", "television"],
-    "household_furniture": ["bed", "chair", "couch", "table", "wardrobe"],
-    "insects": ["bee", "beetle", "butterfly", "caterpillar", "cockroach"],
-    "large_carnivores": ["bear", "leopard", "lion", "tiger", "wolf"],
-    "large_man-made_outdoor_things": ["bridge", "castle", "house", "road", "skyscraper"],
-    "large_natural_outdoor_scenes": ["cloud", "forest", "mountain", "plain", "sea"],
-    "large_omnivores_and_herbivores": ["camel", "cattle", "chimpanzee", "elephant", "kangaroo"],
-    "medium_mammals": ["fox", "porcupine", "possum", "raccoon", "skunk"],
-    "non-insect_invertebrates": ["crab", "lobster", "snail", "spider", "worm"],
-    "people": ["baby", "boy", "girl", "man", "woman"],
-    "reptiles": ["crocodile", "dinosaur", "lizard", "snake", "turtle"],
-    "small_mammals": ["hamster", "mouse", "rabbit", "shrew", "squirrel"],
-    "trees": ["maple_tree", "oak_tree", "palm_tree", "pine_tree", "willow_tree"],
-    "vehicles_1": ["bicycle", "bus", "motorcycle", "pickup_truck", "train", "streetcar", "tank", ],
-    "vehicles_2": ["lawn_mower", "rocket", "tractor"]
-}
+from .hierarchical_dataloader import coarse_to_fine
 
 fine_to_coarse = {fine: coarse for coarse, fine_list in coarse_to_fine.items() for fine in fine_list}
 
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5071, 0.4867, 0.4408), (0.2675, 0.2565, 0.2761))
+])
 
-class HierarchicalDataset(ImageFolder):
+
+class CoarseDataset(datasets.ImageFolder):
     def __init__(self, root, transform=None):
         super().__init__(root, transform=transform)
         self.coarse_labels = [fine_to_coarse[self.classes[idx]] for idx in self.targets]
@@ -35,4 +21,4 @@ class HierarchicalDataset(ImageFolder):
     def __getitem__(self, index):
         img, fine_label = super().__getitem__(index)
         coarse_label = self.coarse_classes.index(self.coarse_labels[index])
-        return img, coarse_label, fine_label
+        return img, coarse_label
