@@ -8,13 +8,14 @@ from tqdm import tqdm
 IMAGE_SIZE = 32
 TRANSFORMS = A.Compose([
     A.RandomCrop(width=int(IMAGE_SIZE * 0.8), height=int(IMAGE_SIZE * 0.8), p=0.2),
-    A.RandomBrightnessContrast(p=0.2),
     A.HorizontalFlip(p=0.5),
+    A.RandomBrightnessContrast(p=0.2),
     A.RGBShift(p=0.2),
     A.Rotate(limit=15, p=0.2),
-    A.GaussNoise(p=0.3),
+    A.AdvancedBlur(blur_limit=5, p=0.3),
     A.ISONoise(color_shift=(0.01, 0.05), intensity=(0.1, 0.5), p=0.3),
-    A.MotionBlur(blur_limit=7, p=0.2),
+    A.MotionBlur(blur_limit=5, p=0.2),
+    A.ImageCompression(p=0.1),
     A.Resize(IMAGE_SIZE, IMAGE_SIZE),
 ])
 
