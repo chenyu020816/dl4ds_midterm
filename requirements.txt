@@ -8,3 +8,7 @@ pandas
 matplotlib
 scikit-learn
 albumentations
+ftfy
+regex
+cudatoolkit
+git+https://github.com/openai/CLIP.git
