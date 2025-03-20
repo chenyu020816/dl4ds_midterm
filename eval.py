@@ -51,4 +51,4 @@ if __name__ == '__main__':
     with open(args.config, "r") as f:
         print(args.config)
         config = yaml.safe_load(f)
-    main(config, args.runs_folder, args.ool_pred)
+    main(config, args.runs_folder, args.ood_pred)
