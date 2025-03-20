@@ -1,0 +1,12 @@
+MODEL: "SimpleCNN"
+DEVICE: "cuda"
+EPOCHS: 30
+BATCH_SIZE: 256
+PRETRAIN: True
+LR: 1e-4
+LOSS: LabelSmooth_CE
+LR_STEP_SIZE: 15
+NUM_WORKERS: 4
+DATA_PATH: "./data/aug_noise_data"
+TRAIN_SIZE: 0.8
+SEED: 42

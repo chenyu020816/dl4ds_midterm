@@ -17,9 +17,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN apt-get install -f && \
     apt-get upgrade -y
 
-RUN nvcc --version
-
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3.9 \
     python3-pip && \

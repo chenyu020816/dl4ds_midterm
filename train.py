@@ -130,7 +130,6 @@ def main(config):
         model.parameters(),
         lr=float(config["LR"]),
         eps=1e-8,
-
     )
     scheduler = optim.lr_scheduler.StepLR(
         optimizer,

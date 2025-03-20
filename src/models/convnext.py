@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 
+
 def get_convnext(model_name, num_classes, pretrained):
     model_name = model_name.lower()
 
@@ -29,7 +30,7 @@ def get_convnext(model_name, num_classes, pretrained):
             param.requires_grad = False
 
         for name, param in model.named_parameters():
-            if "features.7" in name:  # ConvNeXt 的最後一個 block
+            if "features.7" in name:
                 param.requires_grad = True
 
         model.classifier[2] = nn.Sequential(
