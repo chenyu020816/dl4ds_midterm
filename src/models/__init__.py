@@ -2,7 +2,7 @@ from .resnet import *
 from .simple_cnn import SimpleCNN
 
 __all__ = [
-    "ResNet",
+    "ResNet18",
     "ResNet34",
     "ResNet50",
     "ResNet101",
