@@ -14,7 +14,7 @@ import yaml
 
 from utils.dataloader import build_cifar100_dataloader
 from utils.utils import *
-from models import *
+from src import *
 
 
 class obj:
@@ -59,7 +59,6 @@ def train(config, model, epoch, train_loader, optimizer, criterion):
 
 def validate(config, model, epoch, val_loader, criterion):
     model.eval()
-
     running_loss = 0.0
     correct = 0
     total = 0
@@ -109,6 +108,9 @@ def wdnb_config(config):
 
 
 def create_runs_folder(runs_name):
+    """
+    Create a folder inside "trained_weights"
+    """
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     runs_folder = os.path.join("trained_weights", f"{runs_name}_{timestamp}")
     os.makedirs(runs_folder, exist_ok=True)
@@ -127,19 +129,29 @@ def main(config):
         model.parameters(),
         lr=float(config["LR"]),
         eps=1e-8,
-    )
-    scheduler = optim.lr_scheduler.CosineAnnealingLR(
-        optimizer,
-        T_max=100,
-        eta_min=1e-6
-    )
-    # pdb.set_trace()
-    wandb.init(project="-sp25-ds542-challenge", config=wdnb_config(config))
-    wandb.watch(model)
 
+    )
+    scheduler = optim.lr_scheduler.StepLR(
+        optimizer,
+        step_size=config["LR_STEP_SIZE"],
+        gamma=0.5
+    )
+    early_stopping = EarlyStopping(patience=5)
+
+    # pdb.set_trace()
+    # create model training folder to save model's weights, logs, ...
     log_folder = create_runs_folder(config["MODEL"])
     log_path = os.path.join(log_folder, "log.txt")
     print(f"Training Folder: {log_folder}")
+
+    # init wandb
+    wandb.init(
+        project="-sp25-ds542-challenge",
+        config=wdnb_config(config),
+        name=log_folder,
+    )
+    wandb.watch(model)
+
     best_val_acc = 0.0
     epochs = config["EPOCHS"]
     with open(log_path, "w") as log_file:
@@ -169,8 +181,11 @@ def main(config):
                 best_val_acc = val_acc
                 torch.save(model.state_dict(), os.path.join(log_folder, "best_model.pth"))
                 wandb.save(os.path.join(log_folder, "best_model.pth"))
+            if early_stopping(val_loss):
+                break
 
     wandb.finish()
+
     cm_df = DataFrame(
         cm,
         index=[f"True_{i}" for i in range(cm.shape[0])],
@@ -179,6 +194,7 @@ def main(config):
     cm_path = os.path.join(log_folder, "confusion_matrix.csv")
     cm_df.to_csv(cm_path, index=True)
     print(f"Trained weight have been saved in {log_folder}")
+    return
 
 
 if __name__ == '__main__':

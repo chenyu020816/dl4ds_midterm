@@ -1,6 +1,6 @@
-from .resnet import *
-from .simple_cnn import SimpleCNN
+from .models import *
 from .criterion import *
+from early_stopping import EarlyStopping
 
 __all__ = [
     "ResNet",
@@ -9,6 +9,6 @@ __all__ = [
     "ResNet101",
     "ResNet152",
     "SimpleCNN",
-    "LabelSmooth_CE"
-
+    "LabelSmooth_CE",
+    "EarlyStopping",
 ]

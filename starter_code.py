@@ -15,7 +15,7 @@ import json
 
 import albumentations as A
 
-from models.resnet import *
+from src.resnet import *
 
 ################################################################################
 # Model Definition (Simple Example - You need to complete)
