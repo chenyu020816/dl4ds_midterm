@@ -2,16 +2,24 @@ import albumentations as A
 import argparse
 import cv2
 import os
+from torchvision.transforms import AutoAugment, AutoAgumentPolicy
 from tqdm import tqdm
 
 
+auto_augment = AutoAugment(AutoAugmentPolicy.CIFAR10)
+def auto_augment_transform(image, **kwargs):
+    pil_image = T.ToPILImage()(image)  
+    aug_image = auto_augment(pil_image)
+    return np.array(aug_image)
 IMAGE_SIZE = 32
 TRANSFORMS = A.Compose([
     A.RandomCrop(width=int(IMAGE_SIZE * 0.8), height=int(IMAGE_SIZE * 0.8), p=0.2),
     A.HorizontalFlip(p=0.5),
+    A.Lambda(image=auto_augment_transform),
     A.RandomBrightnessContrast(p=0.2),
     A.RGBShift(p=0.2),
     A.Rotate(limit=15, p=0.2),
+    AutoAugment(AutoAugmentPolicy.CIFAR10),
     A.AdvancedBlur(blur_limit=5, p=0.3),
     A.ISONoise(color_shift=(0.01, 0.05), intensity=(0.1, 0.5), p=0.3),
     A.MotionBlur(blur_limit=5, p=0.2),
