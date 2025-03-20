@@ -64,7 +64,7 @@ def validate(config, model, epoch, val_loader, criterion):
     total = 0
     all_labels = []
     all_predictions = []
-    cm = None
+
     epochs = config["EPOCHS"]
     with torch.no_grad():
         progress_bar = tqdm(val_loader, desc=f"Epoch {epoch+1:3d}/{epochs:3d} [ Val ]", leave=True)
@@ -187,13 +187,6 @@ def main(config):
 
     wandb.finish()
 
-    cm_df = DataFrame(
-        cm,
-        index=[f"True_{i}" for i in range(cm.shape[0])],
-        columns=[f"Pred_{i}" for i in range(cm.shape[1])]
-    )
-    cm_path = os.path.join(log_folder, "confusion_matrix.csv")
-    cm_df.to_csv(cm_path, index=True)
     print(f"Trained weight have been saved in {log_folder}")
     return
 
