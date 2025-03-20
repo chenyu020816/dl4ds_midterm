@@ -1,3 +1,4 @@
+from .convnext import *
 from .resnet import *
 from .simple_cnn import SimpleCNN
 
