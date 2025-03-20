@@ -18,16 +18,8 @@ def main(config, runs_folder, ood_pred):
     log_folder = runs_folder
     log_path = os.path.join(log_folder, "log.txt")
     test_loader = build_cifar100_dataloader(config, mode='test')
-    _, clean_accuracy, cm = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
+    _, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
     print(f"Test Accuracy: {clean_accuracy}")
-
-    cm_df = DataFrame(
-        cm,
-        index=[f"True_{i}" for i in range(cm.shape[0])],
-        columns=[f"Pred_{i}" for i in range(cm.shape[1])]
-    )
-    cm_path = os.path.join(log_folder, "confusion_matrix.csv")
-    cm_df.to_csv(cm_path, index=True)
 
     with open(log_path, "a") as log_file:
         log_file.write(f"Test Accuracy: {clean_accuracy}\n")

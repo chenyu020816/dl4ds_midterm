@@ -187,7 +187,13 @@ def main(config):
                 break
 
     wandb.finish()
-
+    cm_df = DataFrame(
+        cm,
+        index=[f"True_{i}" for i in range(cm.shape[0])],
+        columns=[f"Pred_{i}" for i in range(cm.shape[1])]
+    )
+    cm_path = os.path.join(log_folder, "confusion_matrix.csv")
+    cm_df.to_csv(cm_path, index=True)
     print(f"Trained weight have been saved in {log_folder}")
     return
 
