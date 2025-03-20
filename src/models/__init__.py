@@ -1,4 +1,5 @@
 from .convnext import *
+from .image_encoder import ImageEncoder
 from .resnet import *
 from .simple_cnn import SimpleCNN
 
