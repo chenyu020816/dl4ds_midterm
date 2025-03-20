@@ -12,7 +12,7 @@ from tqdm.auto import tqdm
 import wandb
 import yaml
 
-from utils.dataloader import build_cifar100_dataloader
+from utils import build_cifar100_dataloader, analysis_cm
 from utils.utils import *
 from src import *
 
@@ -194,6 +194,7 @@ def main(config):
     )
     cm_path = os.path.join(log_folder, "confusion_matrix.csv")
     cm_df.to_csv(cm_path, index=True)
+    analysis_cm(cm_path, 30)
     print(f"Trained weight have been saved in {log_folder}")
     return
 

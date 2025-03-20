@@ -1,1 +1,2 @@
 from .dataloader import build_cifar100_dataloader
+from .confusion_matrix_analysis import analysis_cm
