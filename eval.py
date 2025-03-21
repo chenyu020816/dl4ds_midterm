@@ -19,7 +19,12 @@ def main():
         model = src.ClassificationModel(config_path, runs_folder=args.runs_folder)
         model.eval()
     elif args.model_type == 'ovd_classification':
-        pass
+        model = src.OVDClassificationModel(
+            config_path,
+            "cifar100_text_embeddings.pt",
+            runs_folder=args.runs_folder
+        )
+        model.eval()
     elif args.model_type == 'hierarchical_classification':
         pass
     else:
