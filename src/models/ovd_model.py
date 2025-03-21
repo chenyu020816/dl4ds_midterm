@@ -10,7 +10,7 @@ class OVDClassificationModel(ClassificationModel):
     def __init__(self, config, text_encoding_path, runs_folder=None):
         super().__init__(config, runs_folder)
         assert self.config.LOSS == "CL", f"LOSS function should be Contrastive Loss"
-        self.text_encoding = torch.load(text_encoding_path).to(config["DEVICE"])
+        self.text_encoding = torch.load(text_encoding_path).to(self.config.DEVICE)
         self.image_encoder = ImageEncoder(self.model)
 
         
@@ -32,7 +32,7 @@ class OVDClassificationModel(ClassificationModel):
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-
+            print(type(image_encoding), type(self.text_encoding))
             similarity = (100.0 * image_encoding @ self.text_encoding.T).softmax(dim=-1)
             predicted = class_names[similarity.argmax().item()]
 
