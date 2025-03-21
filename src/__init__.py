@@ -1,6 +1,6 @@
 from .models import *
 from .criterion import *
-from .early_stopping import EarlyStopping
+from .early_stopping import *
 
 
 __all__ = [
@@ -10,4 +10,5 @@ __all__ = [
     "AF",
     "mixup_data",
     "mixup_criterion",
+    "EarlyStopping",
 ]

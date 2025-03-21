@@ -13,7 +13,7 @@ from wandb.integration.torch.wandb_torch import torch
 
 from utils.utils import dict2obj
 from utils import *
-from src import *
+import src
 
 
 class ClassificationModel:
@@ -92,12 +92,12 @@ class ClassificationModel:
             # move inputs and labels to the target device
             inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
             if self.config.MIXUP:
-                inputs, labels_a, labels_b, lam = mixup_data(inputs, labels)
+                inputs, labels_a, labels_b, lam = src.mixup_data(inputs, labels)
 
             preds = self.model(inputs)
 
             if self.config.MIXUP:
-                loss = mixup_criterion(self.criterion, preds, labels_a, labels_b, lam)
+                loss = src.mixup_criterion(self.criterion, preds, labels_a, labels_b, lam)
             else:
                 loss = self.criterion(preds, labels)
 
@@ -165,7 +165,7 @@ class ClassificationModel:
             step_size=self.config.LR_STEP_SIZE,
             gamma=0.5
         )
-        early_stopping = EarlyStopping(patience=3)
+        early_stopping = src.EarlyStopping(patience=3)
 
         wandb.init(
             project="-sp25-ds542-challenge",
