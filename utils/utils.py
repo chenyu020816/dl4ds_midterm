@@ -39,3 +39,30 @@ class_names = [
     "squirrel", "streetcar", "sunflower", "sweet_pepper", "table", "tank", "telephone", "television", "tiger", "tractor",
     "train", "trout", "tulip", "turtle", "wardrobe", "whale", "willow_tree", "wolf", "woman", "worm"
 ]
+
+
+coarse_to_fine = {
+    "aquatic_mammals": ["beaver", "dolphin", "otter", "seal", "whale"],
+    "fish": ["aquarium_fish", "flatfish", "ray", "shark", "trout"],
+    "flowers": ["orchid", "poppy", "rose", "sunflower", "tulip"],
+    "food_containers": ["bottle", "bowl", "can", "cup", "plate"],
+    "fruit_and_vegetables": ["apple", "mushroom", "orange", "pear", "sweet_pepper"],
+    "household_electrical_devices": ["clock", "keyboard", "lamp", "telephone", "television"],
+    "household_furniture": ["bed", "chair", "couch", "table", "wardrobe"],
+    "insects": ["bee", "beetle", "butterfly", "caterpillar", "cockroach"],
+    "large_carnivores": ["bear", "leopard", "lion", "tiger", "wolf"],
+    "large_man-made_outdoor_things": ["bridge", "castle", "house", "road", "skyscraper"],
+    "large_natural_outdoor_scenes": ["cloud", "forest", "mountain", "plain", "sea"],
+    "large_omnivores_and_herbivores": ["camel", "cattle", "chimpanzee", "elephant", "kangaroo"],
+    "medium_mammals": ["fox", "porcupine", "possum", "raccoon", "skunk"],
+    "non-insect_invertebrates": ["crab", "lobster", "snail", "spider", "worm"],
+    "people": ["baby", "boy", "girl", "man", "woman"],
+    "reptiles": ["crocodile", "dinosaur", "lizard", "snake", "turtle"],
+    "small_mammals": ["hamster", "mouse", "rabbit", "shrew", "squirrel"],
+    "trees": ["maple_tree", "oak_tree", "palm_tree", "pine_tree", "willow_tree"],
+    "vehicles_1": ["bicycle", "bus", "motorcycle", "pickup_truck", "train", "streetcar", "tank", ],
+    "vehicles_2": ["lawn_mower", "rocket", "tractor"]
+}
+
+
+fine_to_coarse = {fine: coarse for coarse, fine_list in coarse_to_fine.items() for fine in fine_list}
