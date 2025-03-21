@@ -40,7 +40,7 @@ def mixup_criterion(criterion, pred, y_a, y_b, lam):
     return lam * criterion(pred, y_a) + (1 - lam) * criterion(pred, y_b)
 
 
-def mixup_data(x, y, alpha=1.0):
+def mixup_data(x, y, alpha=0.2):
     lam = np.random.beta(alpha, alpha)
     index = torch.randperm(x.size(0)).to(x.device)
     mixed_x = lam * x + (1 - lam) * x[index, :]
