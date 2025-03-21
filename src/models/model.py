@@ -38,10 +38,10 @@ class ClassificationModel:
 
     def _load_model(self):
         try:
-            model_class = getattr(importlib.import_module("src"), self.config.model_name)
-            return model_class(self.config.num_classes, self.config.pretrained)
+            model_class = getattr(importlib.import_module("src"), self.config.MODEL)
+            return model_class(self.config.NUM_CALSSES, self.config.PRETRAINED)
         except AttributeError:
-            raise ValueError(f"'{self.config.model_name}' not defined.")
+            raise ValueError(f"'{self.config.MODEL}' not defined.")
 
 
     def _load_criterion(self):
@@ -149,7 +149,7 @@ class ClassificationModel:
 
 
     def train(self):
-        self.model.to(self.config.device)
+        self.model.to(self.config.DEVICE)
         print("\nModel summary:")
         print(f"{self.model}\n")
 
