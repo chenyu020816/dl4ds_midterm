@@ -40,6 +40,6 @@ def build_cifar100_dataloader(config, data_path, mode='train', transform=transfo
             dataset,
             batch_size=config.BATCH_SIZE,
             shuffle=True,
-            num_workers=config.NUM_WORKER
+            num_workers=config.NUM_WORKERS
         )
         return test_loader
