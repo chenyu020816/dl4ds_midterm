@@ -242,7 +242,7 @@ class ClassificationModel:
         self.model.to(self.config.DEVICE)
 
         log_path = os.path.join(self.runs_folder, "log.txt")
-        test_loader = build_cifar100_dataloader(self.config, mode='test')
+        test_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='test')
         _, clean_accuracy = evaluate_cifar100_test(self.model, test_loader, self.config.DEVICE)
         print(f"Test Accuracy: {clean_accuracy}")
 
