@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision import models
 
 
-def get_convnext(model_name, num_classes, pretrained):
+def get_convnext(model_name, num_classes, pretrained, stochastic_depth_prob=None):
     model_name = model_name.lower()
 
     if model_name == 'convnext_base':
@@ -39,27 +39,29 @@ def get_convnext(model_name, num_classes, pretrained):
             nn.Dropout(0.4),
             nn.Linear(512, num_classes)
         )
+    if stochastic_depth_prob is not None:
+        model.stochastic_depth_prob = 0.05
     return model
 
 
-def ConvNextBase(num_classes, pretrained=False):
-    return get_convnext("convnext_base", num_classes, pretrained)
+def ConvNextBase(num_classes, pretrained=False, stochastic_depth_prob=None):
+    return get_convnext("convnext_base", num_classes, pretrained, stochastic_depth_prob)
 
 
-def ConvNextTiny(num_classes, pretrained=False):
-    return get_convnext("convnext_tiny", num_classes, pretrained)
+def ConvNextTiny(num_classes, pretrained=False, stochastic_depth_prob=None):
+    return get_convnext("convnext_tiny", num_classes, pretrained, stochastic_depth_prob)
 
 
-def ConvNextSmall(num_classes, pretrained=False):
-    return get_convnext("convnext_small", num_classes, pretrained)
+def ConvNextSmall(num_classes, pretrained=False, stochastic_depth_prob=None):
+    return get_convnext("convnext_small", num_classes, pretrained, stochastic_depth_prob)
 
 
-def ConvNextMedium(num_classes, pretrained=False):
-    return get_convnext("convnext_medium", num_classes, pretrained)
+def ConvNextMedium(num_classes, pretrained=False, stochastic_depth_prob=None):
+    return get_convnext("convnext_medium", num_classes, pretrained, stochastic_depth_prob)
 
 
-def ConvNextLarge(num_classes, pretrained=False):
-    return get_convnext("convnext_large", num_classes, pretrained)
+def ConvNextLarge(num_classes, pretrained=False, stochastic_depth_prob=None):
+    return get_convnext("convnext_large", num_classes, pretrained, stochastic_depth_prob)
 
 
 if __name__ == '__main__':

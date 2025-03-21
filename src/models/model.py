@@ -25,8 +25,9 @@ class ClassificationModel:
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
 
-        self.criterion = self._load_criterion()
         self.model = self._load_model()
+        self._model_init()
+        self.criterion = self._load_criterion()
 
 
     def _load_config(self):
@@ -40,7 +41,10 @@ class ClassificationModel:
     def _load_model(self):
         try:
             model_class = getattr(importlib.import_module("src"), self.config.MODEL)
-            return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN)
+            if self.config.MODEL.startswith("Conv"):
+                return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
+            else:
+                return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN)
         except AttributeError:
             raise ValueError(f"'{self.config.MODEL}' not defined.")
 
@@ -78,6 +82,16 @@ class ClassificationModel:
             "seed": self.config.SEED,
         }
         return wdnb_config
+
+
+    def _model_init(self):
+        def initialize_weights(m):
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
+                nn.init.kaiming_normal_(m.weight)
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+
+        self.model.apply(initialize_weights)
 
 
     def _model_train(self, train_loader, optimizer, epoch):
@@ -160,10 +174,10 @@ class ClassificationModel:
             lr=float(self.config.LR),
             eps=1e-8,
         )
-        scheduler = optim.lr_scheduler.StepLR(
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(
             optimizer,
-            step_size=self.config.LR_STEP_SIZE,
-            gamma=0.5
+            T_max=self.config.EPOCHS,
+            eta_min=1e-6
         )
         early_stopping = src.EarlyStopping(patience=3)
 
