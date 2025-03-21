@@ -150,12 +150,12 @@ class ClassificationModel:
                 all_labels.extend(labels.cpu().numpy())
                 all_predictions.extend(predicted.cpu().numpy())
 
-                cm = confusion_matrix(all_labels, all_predictions)
                 total += labels.size(0)
                 correct += predicted.eq(labels).sum().item()
 
                 progress_bar.set_postfix({"loss": running_loss / (i + 1), "acc": 100. * correct / total})
 
+        cm = confusion_matrix(all_labels, all_predictions)
         val_loss = running_loss / len(val_loader)
         val_acc = 100. * correct / total
         return val_loss, val_acc, cm
