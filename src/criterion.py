@@ -55,7 +55,7 @@ class ContrastiveLoss(nn.Module):
 
     def forward(self, image_features, text_features, labels):
         logits = (image_features @ text_features.T) / self.temperature
-        labels = torch.arange(logits.size(0)).to(logits.device)  # Positive Pair 索引
+        labels = labels.to(logits.device)
         return F.cross_entropy(logits, labels)
 
 
