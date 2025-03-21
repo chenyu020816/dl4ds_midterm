@@ -15,6 +15,7 @@ from utils.utils import dict2obj
 from utils import *
 from src import *
 
+
 class ClassificationModel:
     def __init__(self, config_path, runs_folder=None):
         self.config_path = config_path
