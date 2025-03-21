@@ -24,8 +24,9 @@ class ClassificationModel:
         self.runs_folder = self._create_runs_folder() if runs_folder is None else runs_folder
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
-        self.model = self._load_model()
+
         self.criterion = self._load_criterion()
+        self.model = self._load_model()
 
 
     def _load_config(self):
@@ -39,7 +40,7 @@ class ClassificationModel:
     def _load_model(self):
         try:
             model_class = getattr(importlib.import_module("src"), self.config.MODEL)
-            return model_class(self.config.NUM_CALSSES, self.config.PRETRAINED)
+            return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN)
         except AttributeError:
             raise ValueError(f"'{self.config.MODEL}' not defined.")
 
