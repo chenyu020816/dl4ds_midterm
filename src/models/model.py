@@ -167,8 +167,8 @@ class ClassificationModel:
         if not self.config.PRETRAIN:
             self.model.apply(self.initialize_weights)
         self.model.to(self.config.DEVICE)
-        print("\nModel summary:")
-        print(f"{self.model}\n")
+        # print("\nModel summary:")
+        # print(f"{self.model}\n")
 
         train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='train')
         optimizer = optim.AdamW(
