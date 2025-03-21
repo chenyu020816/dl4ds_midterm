@@ -87,7 +87,7 @@ def evaluate_ood_ovd(model, text_encoding, distortion_name, severity, config):
 
             image_encoding = model(inputs)
             similarity = (100.0 * image_encoding @ text_encoding.T).softmax(dim=-1)
-            predicted = class_names[similarity.argmax().item()]
+            predicted = similarity.argmax(axis=1)
             predictions.extend(predicted.cpu().numpy())
     return predictions
 

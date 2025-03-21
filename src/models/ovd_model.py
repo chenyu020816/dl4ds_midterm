@@ -36,7 +36,7 @@ class OVDClassificationModel(ClassificationModel):
             running_loss += loss.item()
 
             similarity = (100.0 * image_encoding @ self.text_encoding.T).softmax(dim=-1)
-            predicted = class_names[similarity.argmax().item()]
+            predicted = similarity.argmax(axis=1)
 
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
@@ -66,7 +66,7 @@ class OVDClassificationModel(ClassificationModel):
 
                 running_loss += loss.item()
                 similarity = (100.0 * image_encoding @ self.text_encoding.T).softmax(dim=-1)
-                predicted = class_names[similarity.argmax().item()]
+                predicted = similarity.argmax(axis=1)
                 all_labels.extend(labels.cpu().numpy())
                 all_predictions.extend(predicted.cpu().numpy())
                 

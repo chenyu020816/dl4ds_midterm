@@ -45,7 +45,7 @@ def evaluate_cifar100_test_ovd(model, testloader, text_encoding, device):
             inputs = inputs.to(device)
             image_encoding = model(inputs)
             similarity = (100.0 * image_encoding @ text_encoding.T).softmax(dim=-1)
-            predicted = class_names[similarity.argmax().item()]
+            predicted = similarity.argmax(axis=1)
 
             predictions.extend(predicted.cpu().numpy()) # Move predictions to CPU and convert to numpy
             total += labels.size(0)
