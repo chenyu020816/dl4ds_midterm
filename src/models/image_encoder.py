@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 
 class ImageEncoder(nn.Module):
-    def __init__(self, base_model, embedding_dim=512):
+    def __init__(self, base_model):
         super(ImageEncoder, self).__init__()
         self.backbone = base_model
 

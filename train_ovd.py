@@ -29,7 +29,6 @@ def train(config, model, epoch, train_loader, text_encoding, optimizer, criterio
     for i, (inputs, labels) in enumerate(progress_bar):
         # move inputs and labels to the target device
         inputs, labels = inputs.to(config["DEVICE"]), labels.to(config["DEVICE"])
-
         image_encoding = model(inputs)
         loss = criterion(image_encoding, text_encoding, labels)
 
@@ -115,7 +114,8 @@ def create_runs_folder(runs_name):
 
 
 def main(config):
-    model = load_model(config["MODEL"])
+    model = load_model(config["MODEL"],  config["EMB_DIM"], config["PRETRAIN"])
+    model = ImageEncoder(model)
     model.to(config["DEVICE"])
     text_encoding = torch.load("cifar100_text_embeddings.pt").to(config["DEVICE"])
     print("\nModel summary:")

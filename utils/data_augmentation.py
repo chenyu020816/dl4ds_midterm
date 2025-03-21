@@ -16,7 +16,6 @@ IMAGE_SIZE = 32
 TRANSFORMS = A.Compose([
     A.RandomCrop(width=int(IMAGE_SIZE * 0.8), height=int(IMAGE_SIZE * 0.8), p=0.2),
     A.HorizontalFlip(p=0.5),
-    A.Lambda(image=auto_augment_transform),
     A.RandomBrightnessContrast(p=0.2),
     A.RGBShift(p=0.2),
     A.Rotate(limit=15, p=0.2),
