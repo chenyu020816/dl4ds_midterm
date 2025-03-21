@@ -26,7 +26,7 @@ class ClassificationModel:
         self.wdnb_config = self._create_wdnb_config()
 
         self.model = self._load_model()
-        self._model_init()
+        self.model.apply(self.initialize_weights)
         self.criterion = self._load_criterion()
 
 
@@ -83,15 +83,15 @@ class ClassificationModel:
         }
         return wdnb_config
 
-
-    def _model_init(self):
-        def initialize_weights(m):
-            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-                nn.init.kaiming_normal_(m.weight)
-                if m.bias is not None:
-                    nn.init.constant_(m.bias, 0)
-
-        self.model.apply(initialize_weights)
+    @staticmethod
+    def initialize_weights(m):
+        if isinstance(m, (nn.Conv2d, nn.Linear)):
+            nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
+        elif isinstance(m, nn.LayerNorm):
+            nn.init.constant_(m.bias, 0)
+            nn.init.constant_(m.weight, 1.0)
 
 
     def _model_train(self, train_loader, optimizer, epoch):
