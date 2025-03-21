@@ -170,6 +170,7 @@ class ClassificationModel:
         wandb.init(
             project="-sp25-ds542-challenge",
             config=self.wdnb_config,
+            name=self.runs_folder,
         )
         wandb.watch(self.model)
 
