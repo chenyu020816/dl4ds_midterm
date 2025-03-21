@@ -163,7 +163,9 @@ class ClassificationModel:
 
 
     def train(self):
-        self.model.apply(self.initialize_weights)
+        # if not pretained model, initialize model's weights
+        if not self.config.PRETRAIN:
+            self.model.apply(self.initialize_weights)
         self.model.to(self.config.DEVICE)
         print("\nModel summary:")
         print(f"{self.model}\n")
