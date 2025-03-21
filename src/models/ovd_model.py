@@ -26,13 +26,14 @@ class OVDClassificationModel(ClassificationModel):
             inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
 
             image_encoding = self.model(inputs)
+            print(type(image_encoding), type(self.text_encoding))
             loss = self.criterion(image_encoding, self.text_encoding, labels)
 
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
-            print(type(image_encoding), type(self.text_encoding))
+
             similarity = (100.0 * image_encoding @ self.text_encoding.T).softmax(dim=-1)
             predicted = class_names[similarity.argmax().item()]
 
