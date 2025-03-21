@@ -1,9 +1,10 @@
 import os
+from torch.utils.data import random_split
 from torchvision import datasets, transforms
 import json
 
 
-def main(output_dir = "./data/cifar100_data"):
+def main(output_dir = "./data/cifar100_data_yolo"):
     os.makedirs(output_dir, exist_ok=True)
 
     def create_class_dirs(class_names):
@@ -38,11 +39,13 @@ def main(output_dir = "./data/cifar100_data"):
         with open(os.path.join(output_dir, f"{dataset_type}_labels.json"), "w") as f:
             json.dump(labels_dict, f, indent=4)
 
-    train_dataset = datasets.CIFAR100(root="./data", train=True, download=True)
-    test_dataset = datasets.CIFAR100(root="./data", train=False, download=True)
+    dataset = datasets.CIFAR100(root="./data", train=True, download=True)
+    train_size = int(len(dataset) * 0.8)
+    val_size = len(dataset) - train_size
+    train_data, val_data = random_split(dataset, [train_size, val_size])
 
-    save_cifar_images(train_dataset, dataset_type="train")
-    save_cifar_images(test_dataset, dataset_type="test")
+    save_cifar_images(train_data, dataset_type="train")
+    save_cifar_images(val_data, dataset_type="test")
 
 
 if __name__ == "__main__":
