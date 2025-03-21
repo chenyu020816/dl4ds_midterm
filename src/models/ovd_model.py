@@ -11,6 +11,7 @@ class OVDClassificationModel(ClassificationModel):
         super().__init__(config, runs_folder)
         assert self.config.LOSS == "CL", f"LOSS function should be Contrastive Loss"
         self.text_encoding = torch.load(text_encoding_path).to(self.config.DEVICE)
+        self.text_encoding = self.text_encoding.float()
         self.image_encoder = ImageEncoder(self.model)
 
         
@@ -26,7 +27,7 @@ class OVDClassificationModel(ClassificationModel):
             inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
 
             image_encoding = self.model(inputs)
-            print(type(image_encoding), type(self.text_encoding))
+
             loss = self.criterion(image_encoding, self.text_encoding, labels)
 
             optimizer.zero_grad()
