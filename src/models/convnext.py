@@ -11,7 +11,7 @@ def get_convnext(model_name, num_classes, pretrained):
         model = models.convnext_base(weights=pretrained_weights)
     elif model_name == 'convnext_tiny':
         pretrained_weights = models.ConvNeXt_Tiny_Weights if pretrained else None
-        model = models.resnet18(weights=pretrained_weights)
+        model = models.convnext_tiny(weights=pretrained_weights)
     elif model_name == 'convnext_small':
         pretrained_weights = models.ConvNeXt_Small_Weights.IMAGENET1K_V1 if pretrained else None
         model = models.convnext_small(weights=pretrained_weights)
