@@ -1,9 +1,11 @@
+from .model import *
 from .convnext import *
 from .image_encoder import ImageEncoder
 from .resnet import *
 from .simple_cnn import SimpleCNN
 
 __all__ = [
+    "ClassificationModel",
     "ResNet18",
     "ResNet34",
     "ResNet50",

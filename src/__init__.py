@@ -1,9 +1,10 @@
-from .models import *
+from .models import ClassificationModel
 from .criterion import *
 from .early_stopping import EarlyStopping
 
 
 __all__ = [
+    "ClassificationModel",
     "CE",
     "LabelSmooth_CE",
     "FC",

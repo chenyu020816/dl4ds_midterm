@@ -1,0 +1,239 @@
+from datetime import datetime
+import importlib
+import os
+import shutil
+
+import wandb
+from pandas import DataFrame
+from sklearn.metrics import confusion_matrix
+from torch import optim
+import yaml
+from tqdm import tqdm
+from wandb.integration.torch.wandb_torch import torch
+
+from utils.utils import dict2obj
+from utils import *
+from src import *
+
+class ClassificationModel:
+    def __init__(self, config_path, runs_folder=None):
+        self.config_path = config_path
+        self.config = self._load_config()
+
+        self.runs_folder = self._create_runs_folder() if runs_folder is None else runs_folder
+        self.log_path = os.path.join(self.runs_folder, "log.txt")
+        self.wdnb_config = self._create_wdnb_config()
+        self.model = self._load_model()
+        self.criterion = self._load_criterion()
+
+
+    def _load_config(self):
+        with open(self.config_path, "r") as f:
+            print(self.config_path)
+            config = yaml.safe_load(f)
+        config = dict2obj(config)
+        return config
+
+
+    def _load_model(self):
+        try:
+            model_class = getattr(importlib.import_module("src"), self.config.model_name)
+            return model_class(self.config.num_classes, self.config.pretrained)
+        except AttributeError:
+            raise ValueError(f"'{self.config.model_name}' not defined.")
+
+
+    def _load_criterion(self):
+        try:
+            model_class = getattr(importlib.import_module("src"), self.config.LOSS)
+            return model_class
+        except AttributeError:
+            raise ValueError(f"'{self.config.LOSS}' not defined.")
+
+
+    def _create_runs_folder(self):
+        """
+        Create a folder inside "trained_weights"
+        """
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        runs_folder = os.path.join("trained_weights", f"{self.config.MODEL}_{timestamp}")
+        os.makedirs(runs_folder, exist_ok=True)
+        shutil.copy(self.config_path, runs_folder)
+        return runs_folder
+
+
+    def _create_wdnb_config(self):
+        wdnb_config = {
+            "model": self.config.MODEL,
+            "batch_size": self.config.BATCH_SIZE,
+            "learning_rate": self.config.LR,
+            "epochs": self.config.EPOCHS,
+            "num_workers": self.config.NUM_WORKERS,
+            "device": self.config.DEVICE,
+            "data_dir": "./data",
+            "ood_dir": "./data/ood-test",
+            "wandb_project": "sp25-ds542-challenge",
+            "seed": self.config.SEED,
+        }
+        return wdnb_config
+
+
+    def _model_train(self, train_loader, optimizer, epoch):
+        self.model.train()
+
+        running_loss, correct, total = 0.0, 0, 0
+        epochs = self.config.EPOCHS
+        labels_a, labels_b, lam = None, None, None
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [Train]", leave=True)
+
+        for i, (inputs, labels) in enumerate(progress_bar):
+            # move inputs and labels to the target device
+            inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
+            if self.config.MIXUP:
+                inputs, labels_a, labels_b, lam = mixup_data(inputs, labels)
+
+            preds = self.model(inputs)
+
+            if self.config.MIXUP:
+                loss = mixup_criterion(self.criterion, preds, labels_a, labels_b, lam)
+            else:
+                loss = self.criterion(preds, labels)
+
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            running_loss += loss.item()
+            _, predicted = torch.max(preds, 1)
+
+            total += labels.size(0)
+            correct += predicted.eq(labels).sum().item()
+
+            progress_bar.set_postfix({"loss": running_loss / (i + 1), "acc": 100. * correct / total})
+
+        train_loss = running_loss / len(train_loader)
+        train_acc = 100. * correct / total
+        return train_loss, train_acc
+
+
+    def _model_validate(self, val_loader, epoch):
+        self.model.eval()
+        running_loss = 0.0
+        correct = 0
+        total = 0
+        all_labels = []
+        all_predictions = []
+        epochs = self.config.EPOCHS
+        with torch.no_grad():
+            progress_bar = tqdm(val_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [ Val ]", leave=True)
+            for i, (inputs, labels) in enumerate(progress_bar):
+                # move inputs and labels to the target device
+                inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
+                preds = self.model(inputs)
+                loss = self.criterion(preds, labels)
+
+                running_loss += loss.item()
+                _, predicted = torch.max(preds, 1)
+                all_labels.extend(labels.cpu().numpy())
+                all_predictions.extend(predicted.cpu().numpy())
+
+                cm = confusion_matrix(all_labels, all_predictions)
+                total += labels.size(0)
+                correct += predicted.eq(labels).sum().item()
+
+                progress_bar.set_postfix({"loss": running_loss / (i + 1), "acc": 100. * correct / total})
+
+        val_loss = running_loss / len(val_loader)
+        val_acc = 100. * correct / total
+        return val_loss, val_acc, cm
+
+
+    def train(self):
+        self.model.to(self.config.device)
+        print("\nModel summary:")
+        print(f"{self.model}\n")
+
+        train_loader, val_loader = build_cifar100_dataloader(self.config, mode='train')
+        optimizer = optim.AdamW(
+            self.model.parameters(),
+            lr=float(self.config.LR),
+            eps=1e-8,
+        )
+        scheduler = optim.lr_scheduler.StepLR(
+            optimizer,
+            step_size=self.config.LR_STEP_SIZE,
+            gamma=0.5
+        )
+        early_stopping = EarlyStopping(patience=3)
+
+        wandb.init(
+            project="-sp25-ds542-challenge",
+            config=self.wdnb_config,
+        )
+        wandb.watch(self.model)
+
+        best_val_acc = 0.0
+
+        with open(self.log_path, "w") as log_file:
+            for epoch in range(self.config.EPOCHS):
+                train_loss, train_acc = self._model_train(
+                    train_loader, optimizer, epoch
+                )
+                val_loss, val_acc, cm = self._model_validate(
+                    val_loader, epoch
+                )
+                scheduler.step()
+                wandb.log({
+                    "epoch": epoch + 1,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "lr": optimizer.param_groups[0]["lr"]
+                })
+                log_file.write(
+                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
+                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
+                )
+                log_file.flush()
+
+                if val_acc > best_val_acc:
+                    best_val_acc = val_acc
+                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "best_model.pth"))
+                    wandb.save(os.path.join(self.runs_folder, "best_model.pth"))
+                if early_stopping(val_loss):
+                    break
+
+        wandb.finish()
+        cm_df = DataFrame(
+            cm,
+            index=[f"True_{i}" for i in range(cm.shape[0])],
+            columns=[f"Pred_{i}" for i in range(cm.shape[1])]
+        )
+        cm_path = os.path.join(self.runs_folder, "confusion_matrix.csv")
+        cm_df.to_csv(cm_path, index=True)
+        analysis_cm(cm_path, 30)
+        print(f"Trained weight have been saved in {self.runs_folder}")
+
+        return
+
+
+    def eval(self, ood_pred=False):
+        model_path = os.path.join(self.runs_folder, "best_model.pth")
+        self.model.load_state_dict(torch.load(model_path))
+        self.model.to(self.config.DEVICE)
+
+        log_path = os.path.join(self.runs_folder, "log.txt")
+        test_loader = build_cifar100_dataloader(self.config, mode='test')
+        _, clean_accuracy = evaluate_cifar100_test(self.model, test_loader, self.config.DEVICE)
+        print(f"Test Accuracy: {clean_accuracy}")
+
+        with open(log_path, "a") as log_file:
+            log_file.write(f"Test Accuracy: {clean_accuracy}\n")
+            log_file.flush()
+
+        if ood_pred:
+            all_predictions = eval_ood.evaluate_ood_test(self.model, self.config)
+            submission_df_ood = eval_ood.create_ood_df(all_predictions)
+            submission_df_ood.to_csv(os.path.join(self.runs_folder, "submission_ood.csv"), index=False)
+
+        return

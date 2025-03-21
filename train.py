@@ -145,7 +145,6 @@ def main(config):
     wandb.init(
         project="-sp25-ds542-challenge",
         config=wdnb_config(config),
-        name=log_folder,
     )
     wandb.watch(model)
 

@@ -2,7 +2,7 @@ import os
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, random_split
 
-from .hierarchical_dataloader import coarse_to_fine
+from .hierarchical_data_converter import coarse_to_fine
 
 fine_to_coarse = {fine: coarse for coarse, fine_list in coarse_to_fine.items() for fine in fine_list}
 
