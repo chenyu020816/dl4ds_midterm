@@ -26,7 +26,6 @@ class ClassificationModel:
         self.wdnb_config = self._create_wdnb_config()
 
         self.model = self._load_model()
-        self.model.apply(self.initialize_weights)
         self.criterion = self._load_criterion()
 
 
@@ -164,6 +163,7 @@ class ClassificationModel:
 
 
     def train(self):
+        self.model.apply(self.initialize_weights)
         self.model.to(self.config.DEVICE)
         print("\nModel summary:")
         print(f"{self.model}\n")
