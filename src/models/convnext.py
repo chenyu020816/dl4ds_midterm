@@ -7,16 +7,16 @@ def get_convnext(model_name, num_classes, pretrained):
     model_name = model_name.lower()
 
     if model_name == 'convnext_base':
-        pretrained_weights = models.ConvNeXt_Base_Weights if pretrained else None
+        pretrained_weights = models.ConvNeXt_Base_Weights.DEFAULT if pretrained else None
         model = models.convnext_base(weights=pretrained_weights)
     elif model_name == 'convnext_tiny':
-        pretrained_weights = models.ConvNeXt_Tiny_Weights if pretrained else None
+        pretrained_weights = models.ConvNeXt_Tiny_Weights.DEFAULT if pretrained else None
         model = models.convnext_tiny(weights=pretrained_weights)
     elif model_name == 'convnext_small':
-        pretrained_weights = models.ConvNeXt_Small_Weights.IMAGENET1K_V1 if pretrained else None
+        pretrained_weights = models.ConvNeXt_Small_Weights.DEFAULT if pretrained else None
         model = models.convnext_small(weights=pretrained_weights)
     elif model_name == 'convnext_large':
-        pretrained_weights = not models.ConvNeXt_Large_Weights.IMAGENET1K_V1 if pretrained else None
+        pretrained_weights = not models.ConvNeXt_Large_Weights.DEFAULT if pretrained else None
         model = models.convnext_large(weights=pretrained_weights)
     else:
         ValueError(f"Invalid model name: {model_name}")
