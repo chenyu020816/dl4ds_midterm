@@ -1,9 +1,11 @@
 import argparse
+import os
 
+import src
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default='configs/config.yaml')
+    parser.add_argument('--runs_folder', type=str, default='')
     parser.add_argument(
         '--model_type',
         type=str,
@@ -12,10 +14,10 @@ def main():
     )
     args = parser.parse_args()
 
+    config_path = os.path.join(args.runs_folder, 'config.yaml')
     if args.model_type == 'classification':
-        from src import ClassificationModel
-        model = ClassificationModel(args.config)
-        model.train()
+        model = src.ClassificationModel(config_path, runs_folder=args.runs_folder)
+        model.eval()
     elif args.model_type == 'ovd_classification':
         pass
     elif args.model_type == 'hierarchical_classification':
