@@ -9,8 +9,8 @@ transform = transforms.Compose([
 ])
 
 
-def build_cifar100_dataloader(config, mode='train', transform=transform):
-    data_folder = os.path.join(config.DATA_PATH)
+def build_cifar100_dataloader(config, data_path, mode='train', transform=transform):
+    data_folder = os.path.join(data_path)
     assert os.path.isdir(data_folder), f"{data_folder} is not exists"
     dataset = datasets.ImageFolder(root=data_folder, transform=transform)
 

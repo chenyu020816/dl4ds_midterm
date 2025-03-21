@@ -170,7 +170,7 @@ class ClassificationModel:
         print("\nModel summary:")
         print(f"{self.model}\n")
 
-        train_loader, val_loader = build_cifar100_dataloader(self.config, mode='train')
+        train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='train')
         optimizer = optim.AdamW(
             self.model.parameters(),
             lr=float(self.config.LR),

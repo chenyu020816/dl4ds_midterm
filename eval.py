@@ -16,7 +16,7 @@ def main(config, runs_folder, ood_pred):
 
     log_folder = runs_folder
     log_path = os.path.join(log_folder, "log.txt")
-    test_loader = build_cifar100_dataloader(config, mode='test')
+    test_loader = build_cifar100_dataloader(config, config["DATA_PATH"], mode='test')
     _, clean_accuracy = eval_cifar100.evaluate_cifar100_test(model, test_loader, config["DEVICE"])
     print(f"Test Accuracy: {clean_accuracy}")
 
