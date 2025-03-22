@@ -194,7 +194,6 @@ def evaluate_ood_test(model, config):
 
 def evaluate_ood_test_ovd(model, text_encoding, config):
     data_dir = "./data/ood-test"
-    device = config.DEVICE
 
     num_files = 19  # Number of files to download
 
@@ -236,7 +235,6 @@ def evaluate_ood_test_ovd(model, text_encoding, config):
 
 def evaluate_ood_test_hierarchical(model, fine_models, coarse_classes, config):
     data_dir = "./data/ood-test"
-    device = config.DEVICE
 
     num_files = 19  # Number of files to download
 
