@@ -1,4 +1,5 @@
 import torch
+from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
 from .model import ClassificationModel
