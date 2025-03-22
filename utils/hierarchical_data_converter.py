@@ -3,29 +3,31 @@ import os
 import shutil
 from tqdm import tqdm
 
-from .utils import coarse_to_fine 
+from utils import coarse_to_fine, class_names, fine_to_coarse
 
 
-def create_coarse_data(src_path, dst_path, mapping):
-    os.makedirs(dst_path, exist_ok=True)
-    
-    for coarse_label, fine_labels in tqdm(mapping.items(), desc="Creating Coarse Dataset"):
-        coarse_folder = os.path.join(dst_path, coarse_label)
-        os.makedirs(coarse_folder, exist_ok=True)
+def create_coarse_data(src_path, dst_path):
+    coarse_folder = os.path.join(dst_path, "coarse_data")
+    fine_folder = os.path.join(dst_path, "fine_data")
 
-        for fine_label in fine_labels:
-            fine_folder = os.path.join(src_path, coarse_label, fine_label)
-            if not os.path.exists(fine_folder):
-                continue
+    for coarse in coarse_to_fine.keys():
+        coarse_class_folder = os.path.join(coarse_folder, coarse)
+        os.makedirs(coarse_class_folder, exist_ok=True)
+        coarse_fine_classes = coarse_to_fine[coarse]
+        for fine_class in coarse_fine_classes:
+            fine_class_folder = os.path.join(fine_folder, coarse, fine_class)
+            os.makedirs(fine_class_folder, exist_ok=True)
 
-            for img in os.listdir(fine_folder):
-                src_img_path = os.path.join(fine_folder, img)
-                dst_img_path = os.path.join(coarse_folder, img)
-                shutil.copy(src_img_path, dst_img_path)
+    for cls in tqdm(class_names):
+        cls_to_coarse = fine_to_coarse[cls]
 
-
-def create_fine_data(src_path, dst_path):
-    shutil.copytree(src_path, dst_path)
+        src_image_folder = os.path.join(src_path, cls)
+        for img in os.listdir(src_image_folder):
+            img_src = os.path.join(src_image_folder, img)
+            img_coarse_dst = os.path.join(coarse_folder, cls_to_coarse, img)
+            img_fine_dst = os.path.join(fine_folder, cls_to_coarse, cls, img)
+            shutil.copy(img_src, img_coarse_dst)
+            shutil.copy(img_src, img_fine_dst)
 
 
 if __name__ == "__main__":
@@ -34,9 +36,6 @@ if __name__ == "__main__":
     parser.add_argument('--output_folder', type=str, default='./data/hierarchical_data')
     args = parser.parse_args()
 
-    coarse_folder = os.path.join(args.output_folder, "coarse_data")
-    fine_folder = os.path.join(args.output_folder, "fine_data")
-    create_coarse_data(args.source_data, coarse_folder, coarse_to_fine)
-    create_fine_data(args.source_data, fine_folder)
+    create_coarse_data(args.source_data, args.output_folder)
 
     
