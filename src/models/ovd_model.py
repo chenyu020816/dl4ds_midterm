@@ -87,8 +87,8 @@ class OVDClassificationModel(ClassificationModel):
         self.model.to(self.config.DEVICE)
 
         log_path = os.path.join(self.runs_folder, "log.txt")
-        test_loader = build_cifar100_dataloader(self.config, mode='test')
-        _, clean_accuracy = evaluate_cifar100_test_ovd(self.model, test_loader, self.config.DEVICE)
+        test_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='test')
+        _, clean_accuracy = evaluate_cifar100_test_ovd(self.model, test_loader, self.text_encoding, self.config.DEVICE)
         print(f"Test Accuracy: {clean_accuracy}")
 
         with open(log_path, "a") as log_file:
