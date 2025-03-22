@@ -1,5 +1,5 @@
 MODEL: "ConvNextBase"
-DEVICE: "mps"
+DEVICE: "cuda"
 EPOCHS: 30
 NUM_CLASSES: 512
 BATCH_SIZE: 256
