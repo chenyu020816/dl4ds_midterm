@@ -8,7 +8,7 @@ def main():
     parser.add_argument(
         '--model_type',
         type=str,
-        default='ovd_classification',
+        default='classification',
         choices=[
             'classification',
             'ovd_classification',

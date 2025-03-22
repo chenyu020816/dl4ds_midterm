@@ -16,7 +16,7 @@ class OVDClassificationModel(ClassificationModel):
         self.image_encoder = ImageEncoder(self.model)
 
         
-    def _model_train(self, model, train_loader, optimizer, epoch):
+    def _model_train(self, model, train_loader, optimizer, epoch, **kwargs):
         model.train()
 
         running_loss, correct, total = 0.0, 0, 0
@@ -49,7 +49,7 @@ class OVDClassificationModel(ClassificationModel):
         return train_loss, train_acc
     
 
-    def _model_validate(self, model, val_loader, epoch):
+    def _model_validate(self, model, val_loader, epoch, **kwargs):
         model.eval()
 
         running_loss, correct, total = 0.0, 0, 0

@@ -81,6 +81,7 @@ class ClassificationModel:
         }
         return wdnb_config
 
+
     @staticmethod
     def initialize_weights(m):
         if isinstance(m, (nn.Conv2d, nn.Linear)):

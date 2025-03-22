@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 
+
 def get_resnet(model_name, num_classes, pretrained):
     model_name = model_name.lower()
 

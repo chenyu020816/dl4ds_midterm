@@ -1,3 +1,4 @@
+import importlib
 from pandas import DataFrame
 
 import src
@@ -12,19 +13,31 @@ class HierarchicalClassificationModel(ClassificationModel):
         super().__init__(config, runs_folder)
         self.coarse_classes = coarse_to_fine.keys()
         self.coarse_to_fine = coarse_to_fine
-        self.model = self.load_model(len(self.coarse_classes))
+        self.model = self.load_model(self.config.HIER_MODEL.COARSE_MODEL, len(self.coarse_classes))
         self.fine_models = self.load_fine_models()
         self.cate_criterion = self.load_criterion()
 
         self._create_fine_runs_folder()
 
+
     def load_fine_models(self):
         model_dict = {}
         for coarse_class in self.coarse_classes:
             num_classes = len(self.coarse_to_fine[coarse_class])
-            model_dict[coarse_class] = self.load_model(num_classes)
+            model_dict[coarse_class] = self.load_model(self.config.HIER_MODEL.FINE_MODEL, num_classes)
 
         return model_dict
+
+
+    def load_model(self, model_name, num_classes):
+        try:
+            model_class = getattr(importlib.import_module("src"), model_name)
+            if self.config.MODEL.startswith("Conv"):
+                return model_class(num_classes, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
+            else:
+                return model_class(num_classes, self.config.PRETRAIN)
+        except AttributeError:
+            raise ValueError(f"'{self.config.MODEL}' not defined.")
 
 
     def _create_fine_runs_folder(self):
