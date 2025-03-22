@@ -15,8 +15,8 @@ class OVDClassificationModel(ClassificationModel):
         self.image_encoder = ImageEncoder(self.model)
 
         
-    def _model_train(self, train_loader, optimizer, epoch):
-        self.model.train()
+    def _model_train(self, model, train_loader, optimizer, epoch):
+        model.train()
 
         running_loss, correct, total = 0.0, 0, 0
         epochs = self.config.EPOCHS
@@ -26,7 +26,7 @@ class OVDClassificationModel(ClassificationModel):
             # move inputs and labels to the target device
             inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
 
-            image_encoding = self.model(inputs)
+            image_encoding = model(inputs)
 
             loss = self.criterion(image_encoding, self.text_encoding, labels)
 
@@ -48,8 +48,8 @@ class OVDClassificationModel(ClassificationModel):
         return train_loss, train_acc
     
 
-    def _model_validate(self, val_loader, epoch):
-        self.model.eval()
+    def _model_validate(self, model, val_loader, epoch):
+        model.eval()
 
         running_loss, correct, total = 0.0, 0, 0
         all_labels = []
@@ -61,7 +61,7 @@ class OVDClassificationModel(ClassificationModel):
             for i, (inputs, labels) in enumerate(progress_bar):
                 # move inputs and labels to the target device
                 inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
-                image_encoding = self.model(inputs)
+                image_encoding = model(inputs)
                 loss = self.criterion(image_encoding, self.text_encoding, labels)
 
                 running_loss += loss.item()
