@@ -15,7 +15,7 @@ from .utils import class_names
 
 def evaluate_ood(model, distortion_name, severity, config):
     data_dir = "./data/ood-test"
-    device = config["DEVICE"]
+    device = config.DEVICE
 
     # Load the OOD images
     images = np.load(os.path.join(data_dir, f"{distortion_name}.npy"))
@@ -31,9 +31,9 @@ def evaluate_ood(model, distortion_name, severity, config):
     dataset = torch.utils.data.TensorDataset(images)
     dataloader = torch.utils.data.DataLoader(
         dataset, 
-        batch_size=config["BATCH_SIZE"],
+        batch_size=config.BATCH_SIZE,
         shuffle=False, 
-        num_workers=config["NUM_WORKERS"],
+        num_workers=config.NUM_WORKERS,
         pin_memory=True)
 
     # Normalize after converting to tensor
@@ -54,7 +54,7 @@ def evaluate_ood(model, distortion_name, severity, config):
 
 def evaluate_ood_ovd(model, text_encoding, distortion_name, severity, config):
     data_dir = "./data/ood-test"
-    device = config["DEVICE"]
+    device = config.DEVICE
 
     # Load the OOD images
     images = np.load(os.path.join(data_dir, f"{distortion_name}.npy"))
@@ -70,9 +70,9 @@ def evaluate_ood_ovd(model, text_encoding, distortion_name, severity, config):
     dataset = torch.utils.data.TensorDataset(images)
     dataloader = torch.utils.data.DataLoader(
         dataset, 
-        batch_size=config["BATCH_SIZE"],
+        batch_size=config.BATCH_SIZE,
         shuffle=False, 
-        num_workers=config["NUM_WORKERS"],
+        num_workers=config.NUM_WORKERS,
         pin_memory=True)
 
     # Normalize after converting to tensor
@@ -104,7 +104,7 @@ def files_already_downloaded(directory, num_files):
 
 def evaluate_ood_test(model, config):
     data_dir = "./data/ood-test"
-    device = config["DEVICE"]
+    device = config.DEVICE
 
     num_files = 19  # Number of files to download
 
@@ -146,7 +146,7 @@ def evaluate_ood_test(model, config):
 
 def evaluate_ood_test_ovd(model, text_encoding, config):
     data_dir = "./data/ood-test"
-    device = config["DEVICE"]
+    device = config.DEVICE
 
     num_files = 19  # Number of files to download
 
