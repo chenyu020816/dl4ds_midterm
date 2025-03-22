@@ -182,14 +182,14 @@ class HierarchicalClassificationModel(ClassificationModel):
             log_file.flush()
 
         if ood_pred:
-            all_predictions = eval_ood.evaluate_ood_test(self.model, self.coarse_to_fine.keys(), self.config)
+            all_predictions = eval_ood.evaluate_ood_test(self.model, list(self.coarse_to_fine.keys()), self.config)
             submission_df_ood = eval_ood.create_ood_df(all_predictions)
             submission_df_ood.to_csv(os.path.join(self.runs_folder, "submission_ood.csv"), index=False)
 
 
     def _load_fine_models_weights(self):
         for coarse_class in self.coarse_classes:
-            model_path = os.path.join(self.runs_folder, coarse_class, "best_model.pth")
+            model_path = os.path.join(self.runs_folder, list(self.coarse_to_fine.keys()), "best_model.pth")
             self.fine_models[coarse_class].load_state_dict(torch.load(model_path))
 
         return
