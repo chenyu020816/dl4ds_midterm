@@ -1,7 +1,7 @@
 import clip
 import torch 
 
-from .utils import class_names
+from utils import class_names
 
 
 if __name__ == "__main__":
