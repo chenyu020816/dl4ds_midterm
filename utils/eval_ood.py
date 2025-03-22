@@ -133,7 +133,7 @@ def evaluate_ood_hierarchical(model, fine_models, coarse_classes, distortion_nam
                 fine_model = fine_models[coarse_classes[classes_predicted[i].item()]]
                 fine_model.to(device)
                 fine_model.eval()
-                output = fine_model(input)
+                output = fine_model(input.unsqueeze(0))
                 _, predicted = output.max(1)
 
                 predictions.extend(predicted.cpu().numpy())

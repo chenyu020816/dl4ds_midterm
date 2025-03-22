@@ -66,7 +66,7 @@ def evaluate_cifar100_test_hierarchical(model, fine_models, coarse_classes, test
                 fine_model = fine_models[coarse_classes[classes_predicted[i].item()]]
                 fine_model.to(device)
                 fine_model.eval()
-                output = fine_model(input)
+                output = fine_model(input.unsqueeze(0))
                 _, predicted = output.max(1)
 
                 predictions.extend(predicted.cpu().numpy()) # Move predictions to CPU and convert to numpy
