@@ -19,3 +19,4 @@ experiments/
 *.csv
 .idea
 trained_weights
+*.pt

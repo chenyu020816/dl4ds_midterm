@@ -19,35 +19,35 @@ import src
 class ClassificationModel:
     def __init__(self, config_path, runs_folder=None):
         self.config_path = config_path
-        self.config = self._load_config()
+        self.config = self.load_config()
 
         self.runs_folder = self._create_runs_folder() if runs_folder is None else runs_folder
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
 
-        self.model = self._load_model()
-        self.criterion = self._load_criterion()
+        self.model = self.load_model(self.config.NUM_CLASSES)
+        self.criterion = self.load_criterion()
 
 
-    def _load_config(self):
+    def load_config(self):
         with open(self.config_path, "r") as f:
             config = yaml.safe_load(f)
         config = dict2obj(config)
         return config
 
 
-    def _load_model(self):
+    def load_model(self, num_classes):
         try:
             model_class = getattr(importlib.import_module("src"), self.config.MODEL)
             if self.config.MODEL.startswith("Conv"):
-                return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
+                return model_class(num_classes, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
             else:
-                return model_class(self.config.NUM_CLASSES, self.config.PRETRAIN)
+                return model_class(num_classes, self.config.PRETRAIN)
         except AttributeError:
             raise ValueError(f"'{self.config.MODEL}' not defined.")
 
 
-    def _load_criterion(self):
+    def load_criterion(self):
         try:
             model_class = getattr(importlib.import_module("src"), self.config.LOSS)
             return model_class
@@ -92,13 +92,13 @@ class ClassificationModel:
             nn.init.constant_(m.weight, 1.0)
 
 
-    def _model_train(self, train_loader, optimizer, epoch):
-        self.model.train()
+    def _model_train(self, model, train_loader, optimizer, epoch, progress_bar=True):
+        model.train()
 
         running_loss, correct, total = 0.0, 0, 0
         epochs = self.config.EPOCHS
         labels_a, labels_b, lam = None, None, None
-        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [Train]", leave=True)
+        progress_bar = tqdm(train_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [Train]", leave=progress_bar)
 
         for i, (inputs, labels) in enumerate(progress_bar):
             # move inputs and labels to the target device
@@ -106,7 +106,7 @@ class ClassificationModel:
             if self.config.MIXUP:
                 inputs, labels_a, labels_b, lam = src.mixup_data(inputs, labels)
 
-            preds = self.model(inputs)
+            preds = model(inputs)
 
             if self.config.MIXUP:
                 loss = src.mixup_criterion(self.criterion, preds, labels_a, labels_b, lam)
@@ -129,8 +129,8 @@ class ClassificationModel:
         return train_loss, train_acc
 
 
-    def _model_validate(self, val_loader, epoch):
-        self.model.eval()
+    def _model_validate(self, model, val_loader, epoch, progress_bar=True):
+        model.eval()
         running_loss = 0.0
         correct = 0
         total = 0
@@ -138,11 +138,11 @@ class ClassificationModel:
         all_predictions = []
         epochs = self.config.EPOCHS
         with torch.no_grad():
-            progress_bar = tqdm(val_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [ Val ]", leave=True)
+            progress_bar = tqdm(val_loader, desc=f"Epoch {epoch + 1:3d}/{epochs:3d} [ Val ]", leave=progress_bar)
             for i, (inputs, labels) in enumerate(progress_bar):
                 # move inputs and labels to the target device
                 inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
-                preds = self.model(inputs)
+                preds = model(inputs)
                 loss = self.criterion(preds, labels)
 
                 running_loss += loss.item()
@@ -194,10 +194,10 @@ class ClassificationModel:
         with open(self.log_path, "w") as log_file:
             for epoch in range(self.config.EPOCHS):
                 train_loss, train_acc = self._model_train(
-                    train_loader, optimizer, epoch
+                    self.model, train_loader, optimizer, epoch
                 )
                 val_loss, val_acc, cm = self._model_validate(
-                    val_loader, epoch
+                    self.model, val_loader, epoch
                 )
                 scheduler.step()
                 wandb.log({
