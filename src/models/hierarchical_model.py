@@ -173,7 +173,7 @@ class HierarchicalClassificationModel(ClassificationModel):
 
         log_path = os.path.join(self.runs_folder, "log.txt")
         _, clean_accuracy = evaluate_cifar100_test_hierarchical(
-            self.model, self.fine_models, test_loader, self.config.DEVICE
+            self.model, self.fine_models, self.coarse_to_fine.keys(), test_loader, self.config.DEVICE
         )
         print(f"Test Accuracy: {clean_accuracy}")
 
