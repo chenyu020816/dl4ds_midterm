@@ -29,17 +29,6 @@ class HierarchicalClassificationModel(ClassificationModel):
         return model_dict
 
 
-    def load_model(self, model_name, num_classes):
-        try:
-            model_class = getattr(importlib.import_module("src"), model_name)
-            if self.config.MODEL.startswith("Conv"):
-                return model_class(num_classes, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
-            else:
-                return model_class(num_classes, self.config.PRETRAIN)
-        except AttributeError:
-            raise ValueError(f"'{self.config.MODEL}' not defined.")
-
-
     def _create_fine_runs_folder(self):
         for coarse_class in self.coarse_classes:
             runs_folder = os.path.join(self.runs_folder, coarse_class)

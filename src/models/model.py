@@ -25,7 +25,7 @@ class ClassificationModel:
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
 
-        self.model = self.load_model(self.config.NUM_CLASSES)
+        self.model = self.load_model(self.config.MODEL, self.config.NUM_CLASSES)
         self.criterion = self.load_criterion()
 
 
@@ -36,9 +36,9 @@ class ClassificationModel:
         return config
 
 
-    def load_model(self, num_classes):
+    def load_model(self, model_name, num_classes):
         try:
-            model_class = getattr(importlib.import_module("src"), self.config.MODEL)
+            model_class = getattr(importlib.import_module("src"), model_name)
             if self.config.MODEL.startswith("Conv"):
                 return model_class(num_classes, self.config.PRETRAIN, self.config.STOCH_DEPTH_PROB)
             else:
