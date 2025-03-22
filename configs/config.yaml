@@ -21,3 +21,5 @@ HIER_MODEL:
   FINE_MODEL_EPOCHS: 5
   COARSE_OVD: True
   FINE_OVD: True
+  COARSE_DATA_PATH: "./data/hierarchical_data/coarse_data"
+  FINE_DATA_PATH: "./data/hierarchical_data/fine_data"

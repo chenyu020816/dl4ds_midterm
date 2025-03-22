@@ -40,7 +40,7 @@ class HierarchicalClassificationModel(ClassificationModel):
         self.model.to(self.config.DEVICE)
         coarse_epochs = self.config.MIER_MODEL.COARSE_MODEL_EPOCHS
         fine_epochs = self.config.MIER_MODEL.FINE_MODEL_EPOCHS
-        train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.COARSE_DATA_PATH, mode='train')
+        train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.HIER.COARSE_DATA_PATH, mode='train')
         optimizer = optim.AdamW(
             self.model.parameters(),
             lr=float(self.config.LR),
@@ -103,7 +103,7 @@ class HierarchicalClassificationModel(ClassificationModel):
 
         fine_data_loaders = {
             coarse_class: build_cifar100_dataloader(
-                self.config, os.path.join(self.config.FINE_DATA_PATH, coarse_class), mode='train'
+                self.config, os.path.join(self.config.HIER.FINE_DATA_PATH, coarse_class), mode='train'
             ) for coarse_class in self.coarse_classes
         }
         print("Finish Coarse model training.")

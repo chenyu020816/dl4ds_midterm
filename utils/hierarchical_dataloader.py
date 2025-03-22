@@ -2,7 +2,6 @@ import os
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, random_split
 
-from .hierarchical_data_converter import coarse_to_fine
 from .utils import class_names, coarse_to_fine, fine_to_coarse
 
 
