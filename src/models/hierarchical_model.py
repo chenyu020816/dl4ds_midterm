@@ -102,6 +102,7 @@ class HierarchicalClassificationModel(ClassificationModel):
                 self.config, os.path.join(self.config.FINE_DATA_PATH, coarse_class), mode='train'
             ) for coarse_class in self.coarse_classes
         }
+        print("Finish Coarse model training.")
         for coarse_class in self.coarse_classes:
             model = self.fine_models[coarse_class].to(self.config.DEVICE)
             early_stopping.counter = 0
@@ -154,7 +155,7 @@ class HierarchicalClassificationModel(ClassificationModel):
             )
             cm_path = os.path.join(self.runs_folder, coarse_class, "coarse_confusion_matrix.csv")
             cm_df.to_csv(cm_path, index=True)
-
+            print(f"Finish {coarse_class} model training.")
         print(f"Trained weight have been saved in {self.runs_folder}")
 
         return
