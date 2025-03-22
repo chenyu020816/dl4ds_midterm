@@ -63,7 +63,7 @@ def evaluate_cifar100_test_hierarchical(model, fine_models, test_loader, device)
             for i in range(labels.shape[0]):
                 input = inputs[i]
                 input = input.to(device)
-                fine_model = fine_models[classes_predicted[i]]
+                fine_model = fine_models[classes_predicted[i].item()]
                 output = fine_model(input)
                 _, predicted = output.max(1)
 

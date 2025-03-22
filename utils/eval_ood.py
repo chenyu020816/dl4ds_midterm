@@ -130,7 +130,7 @@ def evaluate_ood_hierarchical(model, fine_models, distortion_name, severity, con
             for i in range(inputs.shape[0]):
                 input = inputs[i]
                 input = input.to(device)
-                fine_model = fine_models[classes_predicted]
+                fine_model = fine_models[classes_predicted[i].item()]
                 output = fine_model(input)
                 _, predicted = output.max(1)
 
