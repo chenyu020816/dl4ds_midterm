@@ -27,7 +27,8 @@ def main():
         )
         model.eval(args.ood_pred)
     elif args.model_type == 'hierarchical_classification':
-        pass
+        model = src.HierarchicalClassificationModel(config_path, runs_folder=args.runs_folder)
+        model.eval(args.ood_pred)
     else:
         ValueError(f"Invalid model type: {args.model_type}")
 
