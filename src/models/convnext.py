@@ -4,7 +4,7 @@ from torchvision import models
 
 
 def get_convnext(model_name, num_classes, pretrained, stochastic_depth_prob=None):
-    model_name = model_name.lower()
+    # model_name = model_name.lower()
 
     if model_name == 'convnext_base':
         pretrained_weights = models.ConvNeXt_Base_Weights.DEFAULT if pretrained else None

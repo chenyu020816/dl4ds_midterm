@@ -8,7 +8,7 @@ from utils import *
 
 
 class HierarchicalClassificationModel(ClassificationModel):
-    def __init__(self, config, text_encoding_path, runs_folder=None):
+    def __init__(self, config, runs_folder=None):
         super().__init__(config, runs_folder)
         self.coarse_classes = coarse_to_fine.keys()
         self.coarse_to_fine = coarse_to_fine
