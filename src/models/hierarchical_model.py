@@ -49,6 +49,8 @@ class HierarchicalClassificationModel(ClassificationModel):
 
     def train(self):
         self.model.to(self.config.DEVICE)
+        coarse_epochs = self.config.MIER_MODEL.COARSE_MODEL_EPOCHS
+        fine_epochs = self.config.MIER_MODEL.FINE_MODEL_EPOCHS
         train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.COARSE_DATA_PATH, mode='train')
         optimizer = optim.AdamW(
             self.model.parameters(),
@@ -57,7 +59,7 @@ class HierarchicalClassificationModel(ClassificationModel):
         )
         scheduler = optim.lr_scheduler.CosineAnnealingLR(
             optimizer,
-            T_max=self.config.EPOCHS,
+            T_max=coarse_epochs,
             eta_min=1e-6
         )
         early_stopping = src.EarlyStopping(patience=3)
@@ -71,7 +73,7 @@ class HierarchicalClassificationModel(ClassificationModel):
         best_val_acc = 0.0
 
         with open(self.log_path, "w") as log_file:
-            for epoch in range(self.config.EPOCHS):
+            for epoch in range(coarse_epochs):
                 train_loss, train_acc = self._model_train(
                     self.model, train_loader, optimizer, epoch
                 )
@@ -88,8 +90,8 @@ class HierarchicalClassificationModel(ClassificationModel):
                     "lr": optimizer.param_groups[0]["lr"]
                 })
                 log_file.write(
-                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
-                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
+                    f"Epoch {epoch + 1:3d}/{coarse_epochs:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
+                    f"Epoch {epoch + 1:3d}/{coarse_epochs:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
                 )
                 log_file.flush()
 
@@ -128,7 +130,7 @@ class HierarchicalClassificationModel(ClassificationModel):
             )
             scheduler = optim.lr_scheduler.CosineAnnealingLR(
                 optimizer,
-                T_max=self.config.EPOCHS,
+                T_max=fine_epochs,
                 eta_min=1e-6
             )
             early_stopping = src.EarlyStopping(patience=3)
@@ -136,7 +138,7 @@ class HierarchicalClassificationModel(ClassificationModel):
             best_val_acc = 0.0
             log_path = os.path.join(self.runs_folder, coarse_class, "log.txt")
             with open(log_path, "w") as log_file:
-                for epoch in range(self.config.EPOCHS):
+                for epoch in range(fine_epochs):
                     train_loss, train_acc = self._model_train(
                         model, train_loader, optimizer, epoch, False
                     )
@@ -147,8 +149,8 @@ class HierarchicalClassificationModel(ClassificationModel):
 
                     scheduler.step()
                     log_file.write(
-                        f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
-                        f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
+                        f"Epoch {epoch + 1:3d}/{fine_epochs:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
+                        f"Epoch {epoch + 1:3d}/{fine_epochs:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
                     )
                     log_file.flush()
 
