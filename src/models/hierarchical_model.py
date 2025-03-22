@@ -182,7 +182,7 @@ class HierarchicalClassificationModel(ClassificationModel):
             log_file.flush()
 
         if ood_pred:
-            all_predictions = eval_ood.evaluate_ood_test(self.model, self.config)
+            all_predictions = eval_ood.evaluate_ood_test(self.model, self.coarse_to_fine.keys(), self.config)
             submission_df_ood = eval_ood.create_ood_df(all_predictions)
             submission_df_ood.to_csv(os.path.join(self.runs_folder, "submission_ood.csv"), index=False)
 

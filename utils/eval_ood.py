@@ -131,6 +131,8 @@ def evaluate_ood_hierarchical(model, fine_models, coarse_classes, distortion_nam
                 input = inputs[i]
                 input = input.to(device)
                 fine_model = fine_models[coarse_classes[classes_predicted[i].item()]]
+                fine_model.to(device)
+                fine_model.eval()
                 output = fine_model(input)
                 _, predicted = output.max(1)
 
@@ -232,7 +234,7 @@ def evaluate_ood_test_ovd(model, text_encoding, config):
     return all_predictions
 
 
-def evaluate_ood_test_hierarchical(model, fine_models, config):
+def evaluate_ood_test_hierarchical(model, fine_models, coarse_classes, config):
     data_dir = "./data/ood-test"
     device = config.DEVICE
 
@@ -267,7 +269,7 @@ def evaluate_ood_test_hierarchical(model, fine_models, config):
     model.eval()  # Ensure model is in evaluation mode
     for distortion in distortions:
         for severity in range(1, 6):
-            predictions = evaluate_ood_hierarchical(model, fine_models, distortion, severity, config)
+            predictions = evaluate_ood_hierarchical(model, fine_models, coarse_classes, distortion, severity, config)
             all_predictions.extend(predictions)  # Accumulate predictions
             print(f"{distortion} (Severity {severity})")
 

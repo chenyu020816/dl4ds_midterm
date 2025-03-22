@@ -48,7 +48,7 @@ def evaluate_cifar100_test_ovd(model, test_loader, text_encoding, device):
     return predictions, clean_accuracy
 
 
-def evaluate_cifar100_test_hierarchical(model, fine_models, test_loader, device):
+def evaluate_cifar100_test_hierarchical(model, fine_models, coarse_classes, test_loader, device):
     """Evaluation on clean CIFAR-100 test set."""
     model.eval()
     correct = 0
@@ -63,7 +63,9 @@ def evaluate_cifar100_test_hierarchical(model, fine_models, test_loader, device)
             for i in range(labels.shape[0]):
                 input = inputs[i]
                 input = input.to(device)
-                fine_model = fine_models[classes_predicted[i].item()]
+                fine_model = fine_models[coarse_classes[classes_predicted[i].item()]]
+                fine_model.to(device)
+                fine_model.eval()
                 output = fine_model(input)
                 _, predicted = output.max(1)
 
