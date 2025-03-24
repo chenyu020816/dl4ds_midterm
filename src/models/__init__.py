@@ -28,6 +28,8 @@ __all__ = [
     "EfficientNetV2S",
     "EfficientNetV2M",
     "EfficientNetV2L",
+    "EfficientNetB0",
+    "EfficientNetB7",
     "SimpleCNN",
     "ImageEncoder",
 ]
