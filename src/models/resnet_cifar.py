@@ -89,24 +89,24 @@ class ResNet(nn.Module):
         return self.layers(x)
 
 
-def ResNet34_CIFAR(num_classes, **kwargs):
+def ResNet34_CIFAR(num_classes, pretrained=False, **kwargs):
     return ResNet(Block, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
 
 
-def ResNet50_CIFAR(num_classes, **kwargs):
+def ResNet50_CIFAR(num_classes, pretrained=False, **kwargs):
     return ResNet(BottleNeck, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
 
 
-def ResNet101_CIFAR(num_classes, **kwargs):
+def ResNet101_CIFAR(num_classes, pretrained=False, **kwargs):
     return ResNet(BottleNeck, [3, 4, 23, 3], num_classes, 3, act=nn.ReLU())
 
 
-def ResNet152_CIFAR(num_classes, **kwargs):
+def ResNet152_CIFAR(num_classes, pretrained=False, **kwargs):
     return ResNet(BottleNeck, [3, 8, 36, 3], num_classes, 3, act=nn.ReLU())
 
 
 if __name__ == '__main__':
-    model = ResNet50_CIFAR(100)
+    model = ResNet50_CIFAR(100, 20)
     print(model)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
