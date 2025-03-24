@@ -187,7 +187,7 @@ class ClassificationModel:
             T_max=self.config.EPOCHS,
             eta_min=1e-6
         )
-        early_stopping = src.EarlyStopping(patience=3)
+        early_stopping = src.EarlyStopping(patience=5)
 
         wandb.init(
             project="-sp25-ds542-challenge",
