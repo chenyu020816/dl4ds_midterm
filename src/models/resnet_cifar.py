@@ -106,7 +106,7 @@ def ResNet152_CIFAR(num_classes, pretrained=False, **kwargs):
 
 
 if __name__ == '__main__':
-    model = ResNet50_CIFAR(100, 20)
+    model = ResNet50_CIFAR(100, False)
     print(model)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)

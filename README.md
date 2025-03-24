@@ -13,7 +13,7 @@ This will download the images inside data folder
 python utils/download_images.py 
 ```
 
-## Train
+## Training
 Modify the settings in config/config.yaml, or create a new config file
 
 train.py: Original classification model
@@ -24,7 +24,7 @@ python train.py --config PATH/TO/CONFIG/FILE
 ```
 This will return the model's folder path inside trained_weights, the model's folder include the model's weights, log, val data confusion matrix
 
-## Evaluate
+## Evaluation
 Evaluate on the test data, and predict on the ood data if add --ood_pred
 
 ```bash
