@@ -14,16 +14,12 @@ def auto_augment_transform(image, **kwargs):
     return np.array(aug_image)
 IMAGE_SIZE = 32
 TRANSFORMS = A.Compose([
-    A.RandomCrop(width=int(IMAGE_SIZE * 0.8), height=int(IMAGE_SIZE * 0.8), p=0.2),
-    A.HorizontalFlip(p=0.5),
     A.RandomBrightnessContrast(p=0.2),
     A.RGBShift(p=0.2),
     A.Rotate(limit=15, p=0.2),
-    A.AdvancedBlur(blur_limit=5, p=0.3),
-    A.ISONoise(color_shift=(0.01, 0.05), intensity=(0.1, 0.5), p=0.3),
+    A.AdvancedBlur(blur_limit=5, p=0.2),
+    A.ISONoise(color_shift=(0.01, 0.05), intensity=(0.1, 0.5), p=0.2),
     A.MotionBlur(blur_limit=5, p=0.2),
-    A.ImageCompression(p=0.1),
-    A.Resize(IMAGE_SIZE, IMAGE_SIZE),
 ])
 
 
@@ -61,7 +57,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--image_folder', type=str, default='./data/cifar100_data/train')
     parser.add_argument('--aug_folder', type=str, default='./data/aug_cifar100_data')
-    parser.add_argument('--aug_size', type=int, default=1)
+    parser.add_argument('--aug_size', type=int, default=5)
     args = parser.parse_args()
 
     main(args)

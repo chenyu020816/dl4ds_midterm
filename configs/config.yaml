@@ -1,18 +1,23 @@
-MODEL: "ConvNextBase"
+MODEL: "ResNet50"
 DEVICE: "cuda"
-EPOCHS: 30
-NUM_CLASSES: 512
+EPOCHS: 150
+NUM_CLASSES: 100
 BATCH_SIZE: 256
-PRETRAIN: True
-LR: 1e-4
+PRETRAIN: False
+LR: 1e-2
 LOSS: LabelSmooth_CE
 STOCH_DEPTH_PROB: None
-MIXUP: False
 LR_STEP_SIZE: 15
 NUM_WORKERS: 4
-DATA_PATH: "./data/test_aug_noise_data"
+DATA_PATH: "./data/aug_noise_data_v2_5"
 TRAIN_SIZE: 0.8
 SEED: 42
+
+TRANSFORM:
+  # CUTMIX: True
+  MIXUP: False
+  AUTOAUG: True
+  ERASE_PROB: 0.2
 
 HIER_MODEL:
   COARSE_MODEL: "ConvNextBase"

@@ -5,6 +5,7 @@ from .convnext import *
 from .efficientnet import *
 from .image_encoder import ImageEncoder
 from .resnet import *
+from .resnet_cifar import *
 from .simple_cnn import SimpleCNN
 
 __all__ = [
@@ -16,6 +17,10 @@ __all__ = [
     "ResNet50",
     "ResNet101",
     "ResNet152",
+    "ResNet34_CIFAR",
+    "ResNet50_CIFAR",
+    "ResNet101_CIFAR",
+    "ResNet152_CIFAR",
     "ConvNextBase",
     "ConvNextTiny",
     "ConvNextSmall",

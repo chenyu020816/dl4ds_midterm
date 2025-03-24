@@ -11,6 +11,7 @@ import yaml
 from tqdm import tqdm
 from wandb.integration.torch.wandb_torch import torch
 
+from utils.dataloader import build_transform
 from utils.utils import dict2obj
 from utils import *
 import src
@@ -104,12 +105,12 @@ class ClassificationModel:
         for i, (inputs, labels) in enumerate(progress_bar):
             # move inputs and labels to the target device
             inputs, labels = inputs.to(self.config.DEVICE), labels.to(self.config.DEVICE)
-            if self.config.MIXUP:
+            if self.config.TRANSFORM.MIXUP:
                 inputs, labels_a, labels_b, lam = src.mixup_data(inputs, labels)
 
             preds = model(inputs)
 
-            if self.config.MIXUP:
+            if self.config.TRANSFORM.MIXUP:
                 loss = src.mixup_criterion(self.criterion, preds, labels_a, labels_b, lam)
             else:
                 loss = self.criterion(preds, labels)
@@ -169,8 +170,13 @@ class ClassificationModel:
         self.model.to(self.config.DEVICE)
         # print("\nModel summary:")
         # print(f"{self.model}\n")
-
-        train_loader, val_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='train')
+        train_transform = build_transform(self.config.TRANSFORM)
+        train_loader, val_loader = build_cifar100_dataloader(
+            self.config,
+            self.config.DATA_PATH,
+            mode='train',
+            transform=train_transform,
+        )
         optimizer = optim.AdamW(
             self.model.parameters(),
             lr=float(self.config.LR),
