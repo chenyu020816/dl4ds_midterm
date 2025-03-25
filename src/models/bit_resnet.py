@@ -168,7 +168,7 @@ class ResNetV2(nn.Module):
         return self
 
 
-def BitResNet101x1(num_classes=100, pretrained=True, **kwargs):
+def BitResNet101x1_CIFAR100(num_classes=100, pretrained=True, **kwargs):
     model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=1, head_size=100)
     if pretrained:
         weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x1-run0-cifar100.npz")
@@ -176,15 +176,7 @@ def BitResNet101x1(num_classes=100, pretrained=True, **kwargs):
     return model
 
 
-def BitResNet101x2(num_classes=100, pretrained=True, **kwargs):
-    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=2, head_size=100)
-    if pretrained:
-        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x2-run0-cifar100.npz")
-        model.load_from(weights_cifar100)
-    return model
-
-
-def BitResNet101x3(num_classes=100, pretrained=True, **kwargs):
+def BitResNet101x3_CIFAR100(num_classes=100, pretrained=True, **kwargs):
     model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=3, head_size=100)
     if pretrained:
         weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x3-run0-cifar100.npz")
@@ -192,8 +184,72 @@ def BitResNet101x3(num_classes=100, pretrained=True, **kwargs):
     return model
 
 
+def BitResNet50x1_ImageNet(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r50'], width_factor=1, head_size=21843)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R50x1.npz")
+        model.load_from(weights_cifar100)
+        model.head.conv = nn.Conv2d(2048, num_classes, kernel_size=(1, 1), stride=(1, 1))
+        for param in model.body.parameters():
+            param.requires_grad = False
+
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+
+    return model
+
+
+def BitResNet50x3_ImageNet(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r50'], width_factor=3, head_size=21843)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R50x3.npz")
+        model.load_from(weights_cifar100)
+        model.head.conv = nn.Conv2d(2048, num_classes, kernel_size=(1, 1), stride=(1, 1))
+        for param in model.body.parameters():
+            param.requires_grad = False
+
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+
+    return model
+
+
+def BitResNet101x1_ImageNet(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=1, head_size=21843)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x1.npz")
+        model.load_from(weights_cifar100)
+        model.head.conv = nn.Conv2d(2048, num_classes, kernel_size=(1, 1), stride=(1, 1))
+        for param in model.body.parameters():
+            param.requires_grad = False
+
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+
+    return model
+
+
+def BitResNet101x3_ImageNet(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=3, head_size=21843)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x3.npz")
+        model.load_from(weights_cifar100)
+        model.head.conv = nn.Conv2d(2048, num_classes, kernel_size=(1, 1), stride=(1, 1))
+        for param in model.body.parameters():
+            param.requires_grad = False
+
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+
+    return model
+
+
 if __name__ == '__main__':
-    model = BitResNet101x1()
+    model = BitResNet101x1_ImageNet(num_classes=100)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
     print(y.shape)
