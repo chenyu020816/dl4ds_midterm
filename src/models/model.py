@@ -248,9 +248,8 @@ class ClassificationModel:
     def eval(self, ood_pred=False):
         if self.config.MODEL.startswith("Bit"):
             model_path = np.load(os.path.join(self.runs_folder, self.config.MODEL_WEIGHTS))
-            print(model_path)
-              # NOTE: No new head.
             self.model.load_from(model_path)
+            self.model.to(self.config.DEVICE)
         else:
             model_path = os.path.join(self.runs_folder, "best_model.pth")
             self.model.load_state_dict(torch.load(model_path))
