@@ -32,7 +32,7 @@ __all__ = [
     "EfficientNetB0",
     "EfficientNetB7",
     "BitResNet101x1",
-    "BitResNet101x2",
+    # "BitResNet101x2",
     "BitResNet101x3",
     "SimpleCNN",
     "ImageEncoder",
