@@ -26,10 +26,8 @@ class ClassificationModel:
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
 
-        if self.config.MODEL.startswith("Bit"):
-            self.model = src.ResNetV2(src.ResNetV2.BLOCK_UNITS['r101'], width_factor=1, head_size=100)
-        else:
-            self.model = self.load_model(self.config.MODEL, self.config.NUM_CLASSES)
+
+        self.model = self.load_model(self.config.MODEL, self.config.NUM_CLASSES)
         self.criterion = self.load_criterion()
 
 
@@ -246,14 +244,9 @@ class ClassificationModel:
 
 
     def eval(self, ood_pred=False):
-        if self.config.MODEL.startswith("Bit"):
-            model_path = np.load(os.path.join(self.runs_folder, self.config.MODEL_WEIGHTS))
-            self.model.load_from(model_path)
-            self.model.to(self.config.DEVICE)
-        else:
-            model_path = os.path.join(self.runs_folder, "best_model.pth")
-            self.model.load_state_dict(torch.load(model_path))
-            self.model.to(self.config.DEVICE)
+        model_path = os.path.join(self.runs_folder, "best_model.pth")
+        self.model.load_state_dict(torch.load(model_path))
+        self.model.to(self.config.DEVICE)
 
         log_path = os.path.join(self.runs_folder, "log.txt")
         test_loader = build_cifar100_dataloader(self.config, self.config.DATA_PATH, mode='test')

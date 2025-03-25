@@ -168,15 +168,32 @@ class ResNetV2(nn.Module):
         return self
 
 
-def BitResNet101(num_classes=100, pretrained=True, **kwargs):
-    weights_cifar100 = get_weights('vtab/BiT-M-R101x1-run0-cifar100')
-    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=1, head_size=100)  # NOTE: No new head.
-    model.load_from(weights_cifar100)
+def BitResNet101x1(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=1, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x1-run0-cifar100.npz")
+        model.load_from(weights_cifar100)
+    return model
+
+
+def BitResNet101x2(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=2, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x2-run0-cifar100.npz")
+        model.load_from(weights_cifar100)
+    return model
+
+
+def BitResNet101x3(num_classes=100, pretrained=True, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r101'], width_factor=3, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R101x3-run0-cifar100.npz")
+        model.load_from(weights_cifar100)
     return model
 
 
 if __name__ == '__main__':
-    model = BitResNet101()
+    model = BitResNet101x1()
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
     print(y.shape)

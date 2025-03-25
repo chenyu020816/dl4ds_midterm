@@ -6,7 +6,7 @@ from .efficientnet import *
 from .image_encoder import ImageEncoder
 from .resnet import *
 from .resnet_cifar import *
-from .bit_resnet import BitResNet101, ResNetV2
+from .bit_resnet import BitResNet101x1, BitResNet101x2, BitResNet101x3
 from .simple_cnn import SimpleCNN
 
 __all__ = [
@@ -31,8 +31,9 @@ __all__ = [
     "EfficientNetV2L",
     "EfficientNetB0",
     "EfficientNetB7",
-    "BitResNet101",
-    "ResNetV2",
+    "BitResNet101x1",
+    "BitResNet101x2",
+    "BitResNet101x3",
     "SimpleCNN",
     "ImageEncoder",
 ]
