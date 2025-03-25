@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
-
-from .resnet import *
+from torchvision import models
 
 
 def get_pretrained_resnet_cifar(model_name, num_classes):
