@@ -255,18 +255,33 @@ def BitResNet50x3_CIFAR(num_classes=100, pretrained=False, **kwargs):
     return model
 
 
-def BitResNet101x1_CIFAR100MY(num_classes=100, pretrained=False, **kwargs):
+def BitResNet101x1_CIFAR(num_classes=100, pretrained=False, **kwargs):
     model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r101'], width_factor=1, head_size=num_classes)
     return model
 
 
-def BitResNet101x2_CIFAR100MY(num_classes=100, pretrained=False, **kwargs):
+def BitResNet101x2_CIFAR(num_classes=100, pretrained=False, **kwargs):
     model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r101'], width_factor=2, head_size=num_classes)
     return model
 
 
-def BitResNet101x3_CIFAR100MY(num_classes=100, pretrained=False, **kwargs):
+def BitResNet101x3_CIFAR(num_classes=100, pretrained=False, **kwargs):
     model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r101'], width_factor=3, head_size=num_classes)
+    return model
+
+
+def BitResNet152x1_CIFAR(num_classes=100, pretrained=False, **kwargs):
+    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=1, head_size=num_classes)
+    return model
+
+
+def BitResNet152x2_CIFAR(num_classes=100, pretrained=False, **kwargs):
+    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=2, head_size=num_classes)
+    return model
+
+
+def BitResNet152x3_CIFAR(num_classes=100, pretrained=False, **kwargs):
+    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=3, head_size=num_classes)
     return model
 
 
