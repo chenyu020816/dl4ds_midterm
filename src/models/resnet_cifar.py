@@ -1,6 +1,54 @@
 import torch
 import torch.nn as nn
 
+from .resnet import *
+
+
+def get_pretrained_resnet_cifar(model_name, num_classes):
+    model_name = model_name.lower()
+
+    # using models.resnet(pretrained=True) will fail on some version of pytorch
+    if model_name == 'resnet18':
+        pretrained_weights = models.ResNet18_Weights.IMAGENET1K_V1 
+        model = models.resnet18(weights=pretrained_weights)
+    elif model_name == 'resnet34':
+        pretrained_weights = models.ResNet34_Weights.IMAGENET1K_V1 
+        model = models.resnet34(weights=pretrained_weights)
+    elif model_name == 'resnet50':
+        pretrained_weights = models.ResNet50_Weights.IMAGENET1K_V1 
+        model = models.resnet50(weights=pretrained_weights)
+    elif model_name == 'resnet101':
+        pretrained_weights = models.ResNet101_Weights.IMAGENET1K_V1
+        model = models.resnet101(weights=pretrained_weights)
+    elif model_name == 'resnet152':
+        pretrained_weights = models.ResNet152_Weights.IMAGENET1K_V1
+        model = models.resnet152(weights=pretrained_weights)
+    else:
+        ValueError(f"Invalid model name: {model_name}")
+        return
+
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.maxpool = nn.Identity()
+
+    # freeze all parameters except last layer
+    for param in model.parameters():
+        param.requires_grad = False
+
+    for name, param in model.named_parameters():
+        if "layer4" in name:
+            param.requires_grad = True
+        elif "conv1" in name:
+            param.requires_grad = True
+   
+    model.fc = nn.Sequential(
+        nn.Linear(model.fc.in_features, 512),
+        nn.ReLU(),
+        nn.Dropout(0.4),
+        nn.Linear(512, num_classes)
+    )
+    return model
+
+
 class Block(nn.Module):
     expansion = 1
     def __init__(self, in_channels, out_channels, downsample=None, stride=1, act=nn.ReLU()):
@@ -90,23 +138,35 @@ class ResNet(nn.Module):
 
 
 def ResNet34_CIFAR(num_classes, pretrained=False, **kwargs):
-    return ResNet(Block, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
+    if not pretrained:
+        return ResNet(Block, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
+    else:
+        return get_pretrained_resnet_cifar("resnet34", num_classes)
 
 
 def ResNet50_CIFAR(num_classes, pretrained=False, **kwargs):
-    return ResNet(BottleNeck, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
+    if not pretrained:
+        return ResNet(BottleNeck, [3, 4, 6, 3], num_classes, 3, act=nn.ReLU())
+    else:
+        return get_pretrained_resnet_cifar("resnet50", num_classes)
 
 
 def ResNet101_CIFAR(num_classes, pretrained=False, **kwargs):
-    return ResNet(BottleNeck, [3, 4, 23, 3], num_classes, 3, act=nn.ReLU())
+    if not pretrained:
+        return ResNet(BottleNeck, [3, 4, 23, 3], num_classes, 3, act=nn.ReLU())
+    else:
+        return get_pretrained_resnet_cifar("resnet101", num_classes)
 
 
 def ResNet152_CIFAR(num_classes, pretrained=False, **kwargs):
-    return ResNet(BottleNeck, [3, 8, 36, 3], num_classes, 3, act=nn.ReLU())
+    if not pretrained:
+        return ResNet(BottleNeck, [3, 8, 36, 3], num_classes, 3, act=nn.ReLU())
+    else:
+        return get_pretrained_resnet_cifar("resnet152", num_classes)
 
 
 if __name__ == '__main__':
-    model = ResNet34_CIFAR(100, False)
+    model = ResNet34_CIFAR(100, True)
     print(model)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
