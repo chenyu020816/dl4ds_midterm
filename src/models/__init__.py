@@ -9,6 +9,7 @@ from .resnet_cifar import *
 from .bit_resnet import *
 from .simple_cnn import SimpleCNN
 
+# All available models and training architectures
 __all__ = [
     "ClassificationModel",
     "OVDClassificationModel",
@@ -33,6 +34,15 @@ __all__ = [
     "EfficientNetB7",
     "BitResNet101x1_CIFAR100",
     "BitResNet101x3_CIFAR100",
+    "BitResNet50x1_CIFAR",
+    "BitResNet50x2_CIFAR",
+    "BitResNet50x3_CIFAR",
+    "BitResNet101x1_CIFAR",
+    "BitResNet101x2_CIFAR",
+    "BitResNet101x3_CIFAR",
+    "BitResNet152x1_CIFAR",
+    "BitResNet152x2_CIFAR",
+    "BitResNet152x3_CIFAR",
     "BitResNet50x1_ImageNet",
     "BitResNet50x3_ImageNet",
     "BitResNet101x1_ImageNet",
