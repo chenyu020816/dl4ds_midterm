@@ -366,7 +366,7 @@ def BitResNet101x3_ImageNet(num_classes=100, pretrained=True, **kwargs):
 
 
 if __name__ == '__main__':
-    model = BitResNet101x1_CIFAR100MY(num_classes=100)
+    model = BitResNet101x1_CIFAR(num_classes=100)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
     print(y.shape)

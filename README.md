@@ -38,6 +38,11 @@ Modify the settings in config/config.yaml, or create a new config file
 "BitResNet101x1_CIFAR100", "BitResNet101x3_CIFAR100", 
 # Original BitResNet (with ImageNet1k pretrain weights), x1 -> width factor=1
 "BitResNet50x1_ImageNet", "BitResNet50x3_ImageNet", "BitResNet101x1_ImageNet", "BitResNet101x3_ImageNet",
+# Modified BitResNetV2
+"BitResNet50x1_CIFAR", "BitResNet50x2_CIFAR", "BitResNet50x3_CIFAR",
+"BitResNet101x1_CIFAR", "BitResNet101x2_CIFAR", "BitResNet101x3_CIFAR",
+"BitResNet152x1_CIFAR", "BitResNet152x2_CIFAR", "BitResNet152x3_CIFAR",
+# Simple CNN
 "SimpleCNN"
 ```
 
