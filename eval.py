@@ -1,5 +1,6 @@
 import argparse
 import os
+import torch
 
 import src
 
@@ -34,4 +35,5 @@ def main():
 
 
 if __name__ == '__main__':
+    torch.backends.cudnn.benchmark = True
     main()

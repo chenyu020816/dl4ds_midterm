@@ -168,6 +168,7 @@ class ClassificationModel:
         # if not pretained model, initialize model's weights
         if not self.config.PRETRAIN:
             self.model.apply(self.initialize_weights)
+        self.model = torch.compile(self.model)
         self.model.to(self.config.DEVICE)
         # print("\nModel summary:")
         # print(f"{self.model}\n")
