@@ -271,17 +271,46 @@ def BitResNet101x3_CIFAR(num_classes=100, pretrained=False, **kwargs):
 
 
 def BitResNet152x1_CIFAR(num_classes=100, pretrained=False, **kwargs):
-    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=1, head_size=num_classes)
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r152'], width_factor=1, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R152x1.npz")
+        model.load_from(weights_cifar100)
+        model.root.conv = StdConv2d(3, 64 * 1, kernel_size=3, stride=1, padding=1, bias=False)
+        model.root.pool = nn.Identity()
     return model
 
 
 def BitResNet152x2_CIFAR(num_classes=100, pretrained=False, **kwargs):
-    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=2, head_size=num_classes)
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r152'], width_factor=2, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R152x2.npz")
+        model.load_from(weights_cifar100)
+        model.root.conv = StdConv2d(3, 64 * 1, kernel_size=3, stride=1, padding=1, bias=False)
+        model.root.pool = nn.Identity()
+        for param in model.body.parameters():
+            param.requires_grad = False
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+            if "root" in name:
+                param.requires_grad = True
     return model
 
 
-def BitResNet152x3_CIFAR(num_classes=100, pretrained=False, **kwargs):
-    model = ResNetV2CIFAR(ResNetV2CIFAR.BLOCK_UNITS['r152'], width_factor=3, head_size=num_classes)
+def BitResNet152x4_CIFAR(num_classes=100, pretrained=False, **kwargs):
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r152'], width_factor=4, head_size=100)
+    if pretrained:
+        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R152x4.npz")
+        model.load_from(weights_cifar100)
+        model.root.conv = StdConv2d(3, 64 * 1, kernel_size=3, stride=1, padding=1, bias=False)
+        model.root.pool = nn.Identity()
+        for param in model.body.parameters():
+            param.requires_grad = False
+        for name, param in model.named_parameters():
+            if "block.4" in name or "head" in name:
+                param.requires_grad = True
+            if "root" in name:
+                param.requires_grad = True
     return model
 
 
@@ -366,7 +395,8 @@ def BitResNet101x3_ImageNet(num_classes=100, pretrained=True, **kwargs):
 
 
 if __name__ == '__main__':
-    model = BitResNet101x1_CIFAR(num_classes=100)
+    model = BitResNet101x1_CIFAR100(num_classes=100)
+    # model = BitResNet101x1_CIFAR(num_classes=100)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
     print(y.shape)
