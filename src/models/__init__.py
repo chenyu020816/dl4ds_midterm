@@ -54,7 +54,7 @@ __all__ = [
     "BitResNet101x3_CIFAR",                 # Modified BitResNet101x3   (wo pretrained)
     "BitResNet152x1_CIFAR",                 # Modified BitResNet152x1   (wo pretrained)
     "BitResNet152x2_CIFAR",                 # Modified BitResNet152x2   (wo pretrained)
-    "BitResNet152x3_CIFAR",                 # Modified BitResNet152x3   (wo pretrained)
+    "BitResNet152x4_CIFAR",                 # Modified BitResNet152x3   (wo pretrained)
     "BitResNet50x1_ImageNet",               # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
     "BitResNet50x3_ImageNet",               # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
     "BitResNet101x1_ImageNet",              # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
