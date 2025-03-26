@@ -263,3 +263,80 @@ class ClassificationModel:
             submission_df_ood.to_csv(os.path.join(self.runs_folder, "submission_ood.csv"), index=False)
 
         return
+
+
+    def resume(self):
+        model_path = os.path.join(self.runs_folder, "best_model.pth")
+        self.model.load_state_dict(torch.load(model_path))
+        self.model.to(self.config.DEVICE)
+
+        train_transform = build_transform(self.config.TRANSFORM)
+        train_loader, val_loader = build_cifar100_dataloader(
+            self.config,
+            self.config.DATA_PATH,
+            mode='train',
+            transform=train_transform,
+        )
+        optimizer = optim.AdamW(
+            self.model.parameters(),
+            lr=float(self.config.LR),
+            eps=1e-8,
+        )
+        scheduler = optim.lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=self.config.EPOCHS,
+            eta_min=1e-6
+        )
+        early_stopping = src.EarlyStopping(patience=5)
+
+        wandb.init(
+            project="-sp25-ds542-challenge",
+            config=self.wdnb_config,
+            name=self.runs_folder,
+        )
+        wandb.watch(self.model)
+
+        best_val_acc = 0.0
+
+        with open(self.log_path, "w") as log_file:
+            for epoch in range(self.config.EPOCHS):
+                train_loss, train_acc = self._model_train(
+                    self.model, train_loader, optimizer, epoch
+                )
+                val_loss, val_acc, cm = self._model_validate(
+                    self.model, val_loader, epoch
+                )
+                scheduler.step()
+                wandb.log({
+                    "epoch": epoch + 1,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "lr": optimizer.param_groups[0]["lr"]
+                })
+                log_file.write(
+                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [Train]: Loss={train_loss}, Accuracy={train_acc}\n"
+                    f"Epoch {epoch + 1:3d}/{self.config.EPOCHS:3d} [ Val ]: Loss={val_loss}, Accuracy={val_acc}\n"
+                )
+                log_file.flush()
+
+                if val_acc > best_val_acc:
+                    best_val_acc = val_acc
+                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "best_model.pth"))
+                    wandb.save(os.path.join(self.runs_folder, "best_model.pth"))
+                if early_stopping(val_loss):
+                    break
+
+        wandb.finish()
+        cm_df = DataFrame(
+            cm,
+            index=[f"True_{i}" for i in range(cm.shape[0])],
+            columns=[f"Pred_{i}" for i in range(cm.shape[1])]
+        )
+        cm_path = os.path.join(self.runs_folder, "confusion_matrix.csv")
+        cm_df.to_csv(cm_path, index=True)
+        analysis_cm(cm_path, 30)
+        print(f"Trained weight have been saved in {self.runs_folder}")
+
+        return

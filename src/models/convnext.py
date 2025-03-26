@@ -66,7 +66,7 @@ def ConvNextLarge(num_classes, pretrained=False, stochastic_depth_prob=None):
 
 if __name__ == '__main__':
     # test model input & output
-    model = ConvNextSmall(100, pretrained=True)
+    model = ConvNextBase(100, pretrained=True)
     print(model)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)

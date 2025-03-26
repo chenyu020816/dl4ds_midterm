@@ -6,23 +6,29 @@ from .efficientnet import *
 from .image_encoder import ImageEncoder
 from .resnet import *
 from .resnet_cifar import *
+from .densenet import *
 from .bit_resnet import *
 from .simple_cnn import SimpleCNN
 
 # All available models and training architectures
 __all__ = [
-    "ClassificationModel",
-    "OVDClassificationModel",
-    "HierarchicalClassificationModel",
-    "ResNet18",
-    "ResNet34",
-    "ResNet50",
-    "ResNet101",
-    "ResNet152",
-    "ResNet34_CIFAR",
-    "ResNet50_CIFAR",
-    "ResNet101_CIFAR",
-    "ResNet152_CIFAR",
+    "ClassificationModel",                  # not available model
+    "OVDClassificationModel",               # not available model
+    "HierarchicalClassificationModel",      # not available model
+    "ImageEncoder",                         # not available model
+    "DenseNet121_CIFAR",                    # Modified DenseNet121      (wo pretrained)
+    "DenseNet161_CIFAR",                    # Modified DenseNet161      (wo pretrained)
+    "DenseNet169_CIFAR",                    # Modified DenseNet169      (wo pretrained)
+    "DenseNet201_CIFAR",                    # Modified DenseNet201      (wo pretrained)
+    "ResNet18",                             # Original ResNet18         (w/wo pretrained)
+    "ResNet34",                             # Original ResNet34         (w/wo pretrained)
+    "ResNet50",                             # Original ResNet50         (w/wo pretrained)
+    "ResNet101",                            # Original ResNet101        (w/wo pretrained)
+    "ResNet152",                            # Original ResNet152        (w/wo pretrained)
+    "ResNet34_CIFAR",                       # Modified ResNet34         (wo pretrained)
+    "ResNet50_CIFAR",                       # Modified ResNet34         (wo pretrained)
+    "ResNet101_CIFAR",                      # Modified ResNet34         (wo pretrained)
+    "ResNet152_CIFAR",                      # Modified ResNet34         (wo pretrained)
     "ConvNextBase",
     "ConvNextTiny",
     "ConvNextSmall",
@@ -31,6 +37,12 @@ __all__ = [
     "EfficientNetV2M",
     "EfficientNetV2L",
     "EfficientNetB0",
+    "EfficientNetB1",
+    "EfficientNetB2",
+    "EfficientNetB3",
+    "EfficientNetB4",
+    "EfficientNetB5",
+    "EfficientNetB6",
     "EfficientNetB7",
     "BitResNet101x1_CIFAR100",
     "BitResNet101x3_CIFAR100",
@@ -48,5 +60,4 @@ __all__ = [
     "BitResNet101x1_ImageNet",
     "BitResNet101x3_ImageNet",
     "SimpleCNN",
-    "ImageEncoder",
 ]
