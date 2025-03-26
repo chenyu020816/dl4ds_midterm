@@ -137,17 +137,17 @@ class DenseNet(nn.Module):
     """
 
     def __init__(self, growth_rate=32, block_config=(6, 12, 24, 16),
-                 num_init_features=64, bn_size=4, drop_rate=0, num_classes=100, memory_efficient=False):
+                 num_init_features=64, bn_size=4, drop_rate=0, num_classes=1000, memory_efficient=False):
 
         super(DenseNet, self).__init__()
 
         # First convolution
         self.features = nn.Sequential(OrderedDict([
-            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=3, stride=1,
-                                padding=1, bias=False)),
+            ('conv0', nn.Conv2d(3, num_init_features, kernel_size=7, stride=2,
+                                padding=2, bias=False)),
             ('norm0', nn.BatchNorm2d(num_init_features)),
             ('relu0', nn.ReLU(inplace=True)),
-           #  ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
+            ('pool0', nn.MaxPool2d(kernel_size=3, stride=2, padding=1)),
         ]))
 
         # Each denseblock
@@ -173,7 +173,7 @@ class DenseNet(nn.Module):
         self.features.add_module('norm5', nn.BatchNorm2d(num_features))
 
         # Linear layer
-        self.classifier = nn.Linear(num_features, num_classes)
+        self.classifier = nn.Linear(num_features, 1000)
 
         # Official init from torch repo.
         for m in self.modules():
@@ -230,8 +230,27 @@ def DenseNet121_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
         memory_efficient (bool) - If True, uses checkpointing. Much more memory efficient,
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
-    return _densenet('densenet121', 32, (6, 12, 24, 16), 64, pretrained, progress,
+    model = _densenet('densenet121', 32, (6, 12, 24, 16), 64, pretrained, progress,
                      **kwargs)
+    model.features.conv0 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.features.pool0 = nn.Identity()
+    model.features.conv0.requires_grad = True
+    model.features.pool0.requires_grad = True
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    for param in model.parameters():
+        param.requires_grad = False
+    for name, param in model.named_parameters():
+        if "denseblock4" in name:
+            param.requires_grad = True
+        if "classifier" in name:
+            param.requires_grad = True
+        if "conv0" in name:
+            param.requires_grad = True
+        if "norm0" in name:
+            param.requires_grad = True
+        if "pool0" in name:
+            param.requires_grad = True
+    return model
 
 
 def DenseNet161_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
@@ -244,8 +263,27 @@ def DenseNet161_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
         memory_efficient (bool) - If True, uses checkpointing. Much more memory efficient,
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
-    return _densenet('densenet161', 48, (6, 12, 36, 24), 96, pretrained, progress,
+    model = _densenet('densenet161', 48, (6, 12, 36, 24), 96, pretrained, progress,
                      **kwargs)
+    model.features.conv0 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.features.pool0 = nn.Identity()
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    model.features.conv0.requires_grad = True
+    model.features.pool0.requires_grad = True
+    for param in model.parameters():
+        param.requires_grad = False
+    for name, param in model.named_parameters():
+        if "denseblock4" in name:
+            param.requires_grad = True
+        if "classifier" in name:
+            param.requires_grad = True
+        if "conv0" in name:
+            param.requires_grad = True
+        if "norm0" in name:
+            param.requires_grad = True
+        if "pool0" in name:
+            param.requires_grad = True
+    return model
 
 
 def DenseNet169_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
@@ -258,11 +296,30 @@ def DenseNet169_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
         memory_efficient (bool) - If True, uses checkpointing. Much more memory efficient,
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
-    return _densenet('densenet169', 32, (6, 12, 32, 32), 64, pretrained, progress,
+    model = _densenet('densenet169', 32, (6, 12, 32, 32), 64, pretrained, progress,
                      **kwargs)
+    model.features.conv0 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.features.pool0 = nn.Identity()
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    model.features.conv0.requires_grad = True
+    model.features.pool0.requires_grad = True
+    for param in model.parameters():
+        param.requires_grad = False
+    for name, param in model.named_parameters():
+        if "denseblock4" in name:
+            param.requires_grad = True
+        if "classifier" in name:
+            param.requires_grad = True
+        if "conv0" in name:
+            param.requires_grad = True
+        if "norm0" in name:
+            param.requires_grad = True
+        if "pool0" in name:
+            param.requires_grad = True
+    return model
 
 
-def DenseNet201_CIFAR(pretrained=False, progress=True, **kwargs):
+def DenseNet201_CIFAR(num_classes, pretrained=False, progress=True, **kwargs):
     r"""Densenet-201 model from
     `"Densely Connected Convolutional Networks" <https://arxiv.org/pdf/1608.06993.pdf>`_
 
@@ -272,15 +329,35 @@ def DenseNet201_CIFAR(pretrained=False, progress=True, **kwargs):
         memory_efficient (bool) - If True, uses checkpointing. Much more memory efficient,
           but slower. Default: *False*. See `"paper" <https://arxiv.org/pdf/1707.06990.pdf>`_
     """
-    return _densenet('densenet201', 32, (6, 12, 48, 32), 64, pretrained, progress,
+    model = _densenet('densenet201', 32, (6, 12, 48, 32), 64, pretrained, progress,
                      **kwargs)
+    model.features.conv0 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    model.features.pool0 = nn.Identity()
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    for param in model.parameters():
+        param.requires_grad = False
+    for name, param in model.named_parameters():
+        if "denseblock4" in name:
+            param.requires_grad = True
+        if "classifier" in name:
+            param.requires_grad = True
+        if "conv0" in name:
+            param.requires_grad = True
+        if "norm0" in name:
+            param.requires_grad = True
+        if "pool0" in name:
+            param.requires_grad = True
+    return model
 
 
 if __name__ == '__main__':
     import torch
     # test model input & output
-    model = DenseNet161_CIFAR(100, pretrained=False)
-    print(model)
+    model = DenseNet201_CIFAR(100, pretrained=True)
+    # print(model)
+    for name, param in model.named_parameters():
+        if param.requires_grad:
+            print(name)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)
     print(y.shape)
