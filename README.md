@@ -25,26 +25,7 @@ python utils/data_augmentation.py --image_folder PATH/TO/TRAINING_DATA/ --aug_fo
 Modify the settings in config/config.yaml, or create a new config file
 
 #### Available models
-```python
-# Original ResNet (with pretrain weights)
-"ResNet18", "ResNet34", "ResNet50", "ResNet101", "ResNet152",
-# Modified ResNet (without pretrain weights)
-"ResNet50_CIFAR", "ResNet101_CIFAR" (Currently Best), "ResNet152_CIFAR",
-# Original ConvNext (with pretrain weights)
-"ConvNextBase", "ConvNextTiny", "ConvNextSmall", "ConvNextLarge",
-# Original Efficient V1/V2 (with pretrain weights)
-"EfficientNetV2S", "EfficientNetV2M", "EfficientNetV2L", "EfficientNetB0", "EfficientNetB7",
-# Original BitResNet (with Cifar100 pretrain weights)
-"BitResNet101x1_CIFAR100", "BitResNet101x3_CIFAR100", 
-# Original BitResNet (with ImageNet1k pretrain weights), x1 -> width factor=1
-"BitResNet50x1_ImageNet", "BitResNet50x3_ImageNet", "BitResNet101x1_ImageNet", "BitResNet101x3_ImageNet",
-# Modified BitResNetV2
-"BitResNet50x1_CIFAR", "BitResNet50x2_CIFAR", "BitResNet50x3_CIFAR",
-"BitResNet101x1_CIFAR", "BitResNet101x2_CIFAR", "BitResNet101x3_CIFAR",
-"BitResNet152x1_CIFAR", "BitResNet152x2_CIFAR", "BitResNet152x3_CIFAR",
-# Simple CNN
-"SimpleCNN"
-```
+See ./src/models/__init__.py
 
 #### Start training
 ```bash
