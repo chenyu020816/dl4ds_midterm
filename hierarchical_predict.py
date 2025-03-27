@@ -139,6 +139,7 @@ def main():
 
     submission_df_ood = eval_ood.create_ood_df(all_predictions)
     submission_df_ood.to_csv(os.path.join(main_folder, "submission_ood.csv"), index=False)
+    return
 
 
 def evaluate_ood(model, distortion_name, severity, coarse_classes, fine_models_folder):
@@ -200,3 +201,7 @@ def evaluate_ood(model, distortion_name, severity, coarse_classes, fine_models_f
                     predictions.append(pred)
     
     return final_pred
+
+
+if __name__ == "__main__":
+    main()
