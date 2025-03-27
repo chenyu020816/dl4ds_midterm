@@ -37,6 +37,7 @@ class HierarchicalClassificationModel(ClassificationModel):
 
 
     def train(self):
+        self.model = torch.compile(self.model)
         self.model.to(self.config.DEVICE)
         coarse_epochs = self.config.HIER_MODEL.COARSE_MODEL_EPOCHS
         fine_epochs = self.config.HIER_MODEL.FINE_MODEL_EPOCHS
@@ -108,6 +109,7 @@ class HierarchicalClassificationModel(ClassificationModel):
         print("Finish Coarse model training.")
         for coarse_class in self.coarse_classes:
             model = self.fine_models[coarse_class].to(self.config.DEVICE)
+            model = torch.compile(model)
             early_stopping.counter = 0
             early_stopping.best_loss = float('inf')
             train_loader, val_loader = fine_data_loaders[coarse_class]
