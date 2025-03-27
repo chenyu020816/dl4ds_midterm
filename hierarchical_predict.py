@@ -179,7 +179,7 @@ def evaluate_ood(model, distortion_name, severity, coarse_classes, fine_models_f
             _, predicted = outputs.max(1)
 
             coarse_predictions.extend(predicted.cpu().numpy())
-            images.extend(inputs.cpu().numpy())
+            raw_images.extend(inputs.cpu().numpy())
     
     final_pred = []
     for i, coarse_class in enumerate(coarse_classes):
