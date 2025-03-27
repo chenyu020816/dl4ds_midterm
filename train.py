@@ -14,7 +14,7 @@ def main():
             'classification',
             'ovd_classification',
             'hierarchical_classification',
-            'hierarchical_ovd_classification'
+            # 'hierarchical_ovd_classification'
         ],
     )
     args = parser.parse_args()
@@ -28,12 +28,13 @@ def main():
     elif args.model_type == 'hierarchical_classification':
         model = src.HierarchicalClassificationModel(args.config)
         model.train()
-    elif args.model_type == 'hierarchical_ovd_classification':
-        pass
+    # elif args.model_type == 'hierarchical_ovd_classification':
+    #     pass
     else:
         ValueError(f"Invalid model type: {args.model_type}")
 
 
 if __name__ == '__main__':
+
     torch.backends.cudnn.benchmark = True
     main()

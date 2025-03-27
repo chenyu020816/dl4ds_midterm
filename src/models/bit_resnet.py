@@ -298,12 +298,13 @@ def BitResNet152x2_CIFAR(num_classes=100, pretrained=False, **kwargs):
 
 
 def BitResNet152x4_CIFAR(num_classes=100, pretrained=False, **kwargs):
-    model = ResNetV2(ResNetV2.BLOCK_UNITS['r152'], width_factor=4, head_size=100)
+    model = ResNetV2(ResNetV2.BLOCK_UNITS['r152'], width_factor=4, head_size=21843)
     if pretrained:
-        weights_cifar100 = np.load("./bitresnet_weights/BiT-M-R152x4.npz")
+        weights_cifar100 = np.load("./BiT-M-R152x4.npz")
         model.load_from(weights_cifar100)
-        model.root.conv = StdConv2d(3, 64 * 1, kernel_size=3, stride=1, padding=1, bias=False)
+        # model.root.conv = StdConv2d(3, 64 * 1, kernel_size=3, stride=1, padding=1, bias=False)
         model.root.pool = nn.Identity()
+        model.head.conv = nn.Conv2d(2048 * 4, num_classes, kernel_size=1, bias=True)
         for param in model.body.parameters():
             param.requires_grad = False
         for name, param in model.named_parameters():
@@ -395,7 +396,7 @@ def BitResNet101x3_ImageNet(num_classes=100, pretrained=True, **kwargs):
 
 
 if __name__ == '__main__':
-    model = BitResNet101x1_CIFAR100(num_classes=100)
+    model = BitResNet152x4_CIFAR(num_classes=100, pretrained=True)
     # model = BitResNet101x1_CIFAR(num_classes=100)
     data = torch.randn(2, 3, 32, 32)
     y = model(data)

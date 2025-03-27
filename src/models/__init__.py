@@ -59,5 +59,5 @@ __all__ = [
     "BitResNet50x3_ImageNet",               # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
     "BitResNet101x1_ImageNet",              # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
     "BitResNet101x3_ImageNet",              # Original BitResNet101x3   (w/wo pretrained on ImageNet1K)
-    "SimpleCNN",                            # Simple CNn                (wo pretrained)
+    "SimpleCNN",                            # Simple CNN                (wo pretrained)
 ]
