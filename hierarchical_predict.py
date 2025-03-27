@@ -60,7 +60,9 @@ def main():
             coarse_predictions.extend(predicted.cpu().numpy())
             images.extend(inputs.cpu().numpy())
             gt_labels.extend(labels.numpy())
-
+    
+    model.to("cpu")
+    del model
     final_pred = []
     final_labels = []
     for i, coarse_class in enumerate(coarse_classes):
@@ -81,7 +83,9 @@ def main():
                     pred = class_names.index(coarse_to_fine[coarse_class][fine_pred.item()])
                     final_pred.append(pred)
                     final_labels.append(label)
-    
+
+        model.to("cpu")
+        del model
         # time.sleep(0)
     
     del images
