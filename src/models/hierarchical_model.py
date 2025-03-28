@@ -109,7 +109,7 @@ class HierarchicalClassificationModel(ClassificationModel):
         print("Finish Coarse model training.")
         for coarse_class in self.coarse_classes:
             model = self.fine_models[coarse_class].to(self.config.DEVICE)
-            model = torch.compile(model)
+            # model = torch.compile(model)
             early_stopping.counter = 0
             early_stopping.best_loss = float('inf')
             train_loader, val_loader = fine_data_loaders[coarse_class]

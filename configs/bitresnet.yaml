@@ -12,7 +12,7 @@ NUM_WORKERS: 4
 DATA_PATH: "./data/test_aug_noise_data"
 TRAIN_SIZE: 0.8
 SEED: 42
-MODEL_WEIGHTS:
+MODEL_WEIGHTS: ""
 
 TRANSFORM:
   # CUTMIX: True

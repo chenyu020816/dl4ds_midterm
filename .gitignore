@@ -20,3 +20,4 @@ experiments/
 .idea
 trained_weights
 *.pt
+*.npz

@@ -168,6 +168,7 @@ class ClassificationModel:
         # if not pretained model, initialize model's weights
         if not self.config.PRETRAIN:
             self.model.apply(self.initialize_weights)
+        self.model = torch.compile(self.model)
         self.model.to(self.config.DEVICE)
         # print("\nModel summary:")
         # print(f"{self.model}\n")
@@ -323,8 +324,8 @@ class ClassificationModel:
 
                 if val_acc > best_val_acc:
                     best_val_acc = val_acc
-                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "best_model.pth"))
-                    wandb.save(os.path.join(self.runs_folder, "best_model.pth"))
+                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "update_best_model.pth"))
+                    wandb.save(os.path.join(self.runs_folder, "update_best_model.pth"))
                 if early_stopping(val_loss):
                     break
 
