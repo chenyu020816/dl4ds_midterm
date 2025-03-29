@@ -43,8 +43,8 @@ python train.py --config PATH/TO/CONFIG/FILE --model_type classification/ovd_cla
 
 
 ## Evaluation
-Evaluate on the test data, and predict on the ood data if add --ood_pred
+Evaluate on the test data, and add --ood_pred to predict on out-of-distribution data.
 
 ```bash
-python eval.py --runs_folder PATH/TO/MODEL/FOLDER --ood_pred
+python eval.py --runs_folder PATH/TO/MODEL/FOLDER --ood_pred --model_type classification/ovd_classification/hierarchical_classification
 ```
