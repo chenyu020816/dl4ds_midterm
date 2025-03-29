@@ -37,7 +37,6 @@ class HierarchicalClassificationModel(ClassificationModel):
 
 
     def train(self):
-        self.model = torch.compile(self.model)
         self.model.to(self.config.DEVICE)
         coarse_epochs = self.config.HIER_MODEL.COARSE_MODEL_EPOCHS
         fine_epochs = self.config.HIER_MODEL.FINE_MODEL_EPOCHS

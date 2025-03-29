@@ -15,14 +15,14 @@ def convert_compiled_model(model_path):
     new_state_dict = {
         k.replace('_orig_mod.', ''): v for k, v in state_dict.items()
     }
-    new_model_path = os.path.join(os.path.dirname(model_path), "decompiled_model.pth")
+    new_model_path = os.path.join(os.path.dirname(model_path), "best_model.pth")
     torch.save(new_state_dict, new_model_path)
     return
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model_path', type=str, default='./trained_weights/ResNet152/best_model.pth')
+    parser.add_argument('--model_path', type=str, default='./trained_weights/ResNet152/compiled_model.pth')
     args = parser.parse_args()
 
     convert_compiled_model(args.model_path)

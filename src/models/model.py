@@ -13,6 +13,7 @@ from wandb.integration.torch.wandb_torch import torch
 
 from utils.dataloader import build_transform
 from utils.utils import dict2obj
+from utils.compiled_model_converter import convert_compiled_model
 from utils import *
 import src
 
@@ -168,7 +169,8 @@ class ClassificationModel:
         # if not pretained model, initialize model's weights
         if not self.config.PRETRAIN:
             self.model.apply(self.initialize_weights)
-        self.model = torch.compile(self.model)
+        if torch.cuda.is_available():
+            self.model = torch.compile(self.model) 
         self.model.to(self.config.DEVICE)
         # print("\nModel summary:")
         # print(f"{self.model}\n")
@@ -225,12 +227,14 @@ class ClassificationModel:
 
                 if val_acc > best_val_acc:
                     best_val_acc = val_acc
-                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "best_model.pth"))
-                    wandb.save(os.path.join(self.runs_folder, "best_model.pth"))
+                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "compiled_best_model.pth"))
+                    wandb.save(os.path.join(self.runs_folder, "compiled_best_model.pth"))
                 if early_stopping(val_loss):
                     break
 
         wandb.finish()
+        if torch.cuda.is_availabla():
+            convert_compiled_model(os.path.join(self.runs_folder, "compiled_best_model.pth"))
         cm_df = DataFrame(
             cm,
             index=[f"True_{i}" for i in range(cm.shape[0])],
