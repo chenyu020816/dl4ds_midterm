@@ -26,7 +26,7 @@ class ClassificationModel:
         self.runs_folder = self._create_runs_folder() if runs_folder is None else runs_folder
         self.log_path = os.path.join(self.runs_folder, "log.txt")
         self.wdnb_config = self._create_wdnb_config()
-
+        self.model_compile = torch.cuda.is_available()
 
         self.model = self.load_model(self.config.MODEL, self.config.NUM_CLASSES)
         self.criterion = self.load_criterion()
@@ -169,7 +169,7 @@ class ClassificationModel:
         # if not pretained model, initialize model's weights
         if not self.config.PRETRAIN:
             self.model.apply(self.initialize_weights)
-        if torch.cuda.is_available():
+        if self.model_compile:
             self.model = torch.compile(self.model) 
         self.model.to(self.config.DEVICE)
         # print("\nModel summary:")
@@ -201,7 +201,7 @@ class ClassificationModel:
         wandb.watch(self.model)
 
         best_val_acc = 0.0
-
+        model_pt_name = "compiled_best_model.pth" if self.model_compile else "best_model.pth"
         with open(self.log_path, "w") as log_file:
             for epoch in range(self.config.EPOCHS):
                 train_loss, train_acc = self._model_train(
@@ -227,13 +227,14 @@ class ClassificationModel:
 
                 if val_acc > best_val_acc:
                     best_val_acc = val_acc
-                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, "compiled_best_model.pth"))
-                    wandb.save(os.path.join(self.runs_folder, "compiled_best_model.pth"))
+                    
+                    torch.save(self.model.state_dict(), os.path.join(self.runs_folder, model_pt_name))
+                    wandb.save(os.path.join(self.runs_folder, model_pt_name))
                 if early_stopping(val_loss):
                     break
 
         wandb.finish()
-        if torch.cuda.is_availabla():
+        if self.model_compile:
             convert_compiled_model(os.path.join(self.runs_folder, "compiled_best_model.pth"))
         cm_df = DataFrame(
             cm,
